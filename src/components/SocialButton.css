@@ -1,0 +1,25 @@
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  background-color: white;
+  color: var(--gray-700);
+  font-weight: 500;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.social-button:hover {
+  background-color: var(--gray-100);
+  border-color: var(--gray-400);
+}
+
+.social-button img {
+  width: 24px;
+  height: 24px;
+}
+

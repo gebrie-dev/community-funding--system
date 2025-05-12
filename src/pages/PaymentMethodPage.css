@@ -1,0 +1,144 @@
+.payment-method-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.back-button {
+  background-color: #3b82f6;
+  color: white;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.back-button:hover {
+  background-color: #2563eb;
+}
+
+.payment-title {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.payment-title h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.payment-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.payment-container h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.payment-methods {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 3rem;
+}
+
+.payment-method {
+  padding: 1rem;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 180px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.payment-method:hover {
+  border-color: var(--primary);
+}
+
+.payment-method.selected {
+  border-color: var(--primary);
+  background-color: var(--primary-light);
+}
+
+.payment-method img {
+  max-width: 100%;
+  max-height: 60px;
+}
+
+.amount-container {
+  margin-bottom: 2rem;
+}
+
+.amount-container label {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.amount-input-group {
+  display: flex;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.amount-input {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  font-size: 1.25rem;
+  text-align: right;
+}
+
+.amount-input:focus {
+  outline: none;
+}
+
+.currency-select {
+  width: 100px;
+  padding: 0 1rem;
+  border: none;
+  background-color: var(--gray-100);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.currency-select:focus {
+  outline: none;
+}
+
+.continue-button {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1.25rem;
+}
+

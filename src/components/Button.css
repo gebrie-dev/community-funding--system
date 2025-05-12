@@ -1,0 +1,56 @@
+.custom-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  transition: all 0.2s;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.custom-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.custom-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.4);
+}
+
+.custom-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.custom-button.secondary {
+  background-color: var(--gray-200);
+  color: var(--gray-800);
+}
+
+.custom-button.secondary:hover {
+  background-color: var(--gray-300);
+}
+
+.custom-button.outline {
+  background-color: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+}
+
+.custom-button.outline:hover {
+  background-color: var(--primary-light);
+}
+
+.custom-button.danger {
+  background-color: var(--danger);
+}
+
+.custom-button.danger:hover {
+  background-color: #dc2626;
+}
+
