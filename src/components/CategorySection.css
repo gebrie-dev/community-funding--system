@@ -1,7 +1,10 @@
-/* src/components/CategorySection.css */
 .category-section {
   padding: 5rem 2rem;
-  @apply bg-gray-50 dark:bg-dark-lighter;
+  background-color: #f7f7f7; /* Default light mode background */
+}
+
+.category-section.dark {
+  background-color: #2c2f36; /* Dark mode background */
 }
 
 .category-container {
@@ -13,9 +16,13 @@
   text-align: center;
   font-size: 2.5rem;
   font-weight: 700;
-  @apply text-text-light dark:text-text-dark;
+  color: #333; /* Light mode text */
   margin-bottom: 3rem;
   position: relative;
+}
+
+.category-heading.dark {
+  color: #f1f1f1; /* Dark mode text */
 }
 
 .category-heading::after {
@@ -26,7 +33,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 4px;
-  @apply bg-primary;
+  background-color: #034613; /* Primary color */
   border-radius: 2px;
 }
 
@@ -37,21 +44,25 @@
 }
 
 .category-card {
-  @apply bg-white dark:bg-dark-lighter;
+  background-color: white;
   border-radius: 0.5rem;
   padding: 2rem;
   text-align: center;
-  @apply shadow-md dark:shadow-gray-900/50;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  @apply hover:shadow-lg dark:hover:shadow-gray-900/50;
+}
+
+.category-card.dark {
+  background-color: #3e4247; /* Dark mode card background */
 }
 
 .category-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .category-icon {
@@ -61,7 +72,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  @apply bg-primary-light dark:bg-primary/10;
+  background-color: #05742a;
   border-radius: 50%;
   padding: 1rem;
 }
@@ -75,13 +86,21 @@
 .category-name {
   font-size: 1.5rem;
   font-weight: 700;
-  @apply text-text-light dark:text-text-dark;
+  color: #333;
   margin-bottom: 1rem;
 }
 
+.category-name.dark {
+  color: #f1f1f1; /* Dark mode text color */
+}
+
 .category-description {
-  @apply text-gray-600 dark:text-gray-300;
+  color: #666;
   line-height: 1.6;
+}
+
+.category-description.dark {
+  color: #ccc; /* Dark mode description text */
 }
 
 @media (max-width: 768px) {

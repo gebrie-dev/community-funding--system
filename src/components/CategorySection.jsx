@@ -1,4 +1,3 @@
-// src/components/CategorySection.jsx
 import React from "react";
 import { useTheme } from "../context/ThemeContext";
 import "./CategorySection.css";
@@ -9,28 +8,28 @@ const categories = [
     name: "Education",
     description:
       "Support educational initiatives and help students achieve their academic goals.",
-    icon: "/icons/education.svg",
+    icon: "/images/categories/education-icon.png",
   },
   {
     id: 2,
     name: "Healthcare",
     description:
       "Contribute to medical research and healthcare access for those in need.",
-    icon: "/icons/healthcare.svg",
+    icon: "/images/categories/medical-icon.png",
   },
   {
     id: 3,
-    name: "Environment",
+    name: "Social Impact",
     description:
       "Support environmental conservation and sustainable development projects.",
-    icon: "/icons/environment.svg",
+    icon: "/images/categories/social-impact-icon.png",
   },
   {
     id: 4,
-    name: "Technology",
+    name: "Emergency",
     description:
       "Fund innovative tech projects and digital solutions for social impact.",
-    icon: "/icons/technology.svg",
+    icon: "/images/categories/emergency-icon.png",
   },
 ];
 
@@ -49,7 +48,10 @@ const CategorySection = () => {
               className="category-card"
             >
               <div className="category-icon">
-                <img src={category.icon} alt={category.name} />
+                <img
+                  src={category.icon}
+                  alt={`Icon for ${category.name} category`}
+                />
               </div>
               <h3 className="category-name">{category.name}</h3>
               <p className="category-description">{category.description}</p>

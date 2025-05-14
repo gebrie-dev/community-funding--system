@@ -24,12 +24,12 @@ const CampaignCard = ({ campaign }) => {
         <img src={image || "/placeholder.svg?height=200&width=400"} alt={title} />
         {category && (
           <div className="campaign-category">
-            <Tag size={12} />
+            <Tag size={14} />
             <span>{category}</span>
           </div>
         )}
         <div className="campaign-badge">
-          <Heart size={12} />
+          <Heart size={14} />
           <span>Featured</span>
         </div>
       </div>
@@ -52,7 +52,7 @@ const CampaignCard = ({ campaign }) => {
         <div className="progress-stats">
           <div className="stat">
             <div className="stat-icon">
-              <DollarSign size={14} />
+              <DollarSign size={16} />
             </div>
             <div className="stat-info">
               <span className="stat-value">${goal.toLocaleString()}</span>
@@ -62,7 +62,7 @@ const CampaignCard = ({ campaign }) => {
 
           <div className="stat">
             <div className="stat-icon">
-              <Clock size={14} />
+              <Clock size={16} />
             </div>
             <div className="stat-info">
               <span className="stat-value">{daysLeft}</span>
@@ -72,7 +72,7 @@ const CampaignCard = ({ campaign }) => {
 
           <div className="stat">
             <div className="stat-icon">
-              <Users size={14} />
+              <Users size={16} />
             </div>
             <div className="stat-info">
               <span className="stat-value">{donors || Math.floor(raised / 100)}</span>
