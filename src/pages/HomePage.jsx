@@ -6,7 +6,7 @@ import Button from "../components/Button";
 import CampaignCard from "../components/CampaignCard";
 import SearchBar from "../components/SearchBar";
 import CategorySection from "../components/CategorySection";
-import { Heart, Users, Clock } from "lucide-react";
+import { Heart, Users, Clock, Shield, CreditCard } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import "./HomePage.css";
 
@@ -201,97 +201,83 @@ const HomePage = () => {
       </section>
 
       <section className="faq-section">
-        <h2>Frequently Asked Questions</h2>
+        <div className="faq-section-header">
+          <h2>Quick Answers</h2>
+          <p>Common questions about our platform</p>
+        </div>
         <div className="faq-container">
-          <div className="faq-column">
+          <div className="faq-row">
             <div className="faq-item">
-              <h3>How do I start a campaign?</h3>
-              <p>
-                Simply sign up, click on "Launch Campaign", fill in the details
-                about your cause, add images or videos, set a funding goal, and
-                publish!
-              </p>
+              <div className="faq-icon">
+                <CreditCard size={24} />
+              </div>
+              <div className="faq-content">
+                <h3>What payment methods do you accept?</h3>
+                <p>
+                  We accept all major credit cards, PayPal, and bank transfers.
+                  All transactions are secure and encrypted.
+                </p>
+                <Link to="/faq" className="learn-more">
+                  Learn more about payments →
+                </Link>
+              </div>
             </div>
             <div className="faq-item">
-              <h3>How does the funding process work?</h3>
-              <p>
-                When people donate to your campaign, funds are securely held
-                until the campaign ends. Once completed, the funds are
-                transferred to your account minus a small platform fee.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3>What is your fee structure?</h3>
-              <p>
-                We charge a 5% platform fee on the funds you raise. Payment
-                processors may charge an additional 2.9% + $0.30 per
-                transaction.
-              </p>
-            </div>
-          </div>
-          <div className="faq-column">
-            <div className="faq-item">
-              <h3>Is there a time limit on campaigns?</h3>
-              <p>
-                You can choose to run your campaign for up to 60 days. If you
-                need more time, you can always extend your campaign or create a
-                new one.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3>How do donors know their donations are secure?</h3>
-              <p>
-                We use industry-standard encryption and security measures to
-                protect all transactions. We also verify campaign creators and
-                provide updates to donors.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3>Can I donate anonymously?</h3>
-              <p>
-                Yes! During the donation process, you'll have the option to hide
-                your name and donation amount from public view.
-              </p>
+              <div className="faq-icon">
+                <Shield size={24} />
+              </div>
+              <div className="faq-content">
+                <h3>How do you verify campaigns?</h3>
+                <p>
+                  All campaigns undergo a thorough verification process
+                  including identity checks and documentation review.
+                </p>
+                <Link to="/faq" className="learn-more">
+                  Learn more about verification →
+                </Link>
+              </div>
             </div>
           </div>
+          <div className="faq-row">
+            <div className="faq-item">
+              <div className="faq-icon">
+                <Users size={24} />
+              </div>
+              <div className="faq-content">
+                <h3>How do I start a campaign?</h3>
+                <p>
+                  Create an account, click "Launch Campaign", and follow our
+                  simple step-by-step guide to get started.
+                </p>
+                <Link to="/faq" className="learn-more">
+                  Learn more about campaigns →
+                </Link>
+              </div>
+            </div>
+            <div className="faq-item">
+              <div className="faq-icon">
+                <Clock size={24} />
+              </div>
+              <div className="faq-content">
+                <h3>How long do campaigns run?</h3>
+                <p>
+                  Campaigns can run for up to 60 days, with options to extend or
+                  create new ones if needed.
+                </p>
+                <Link to="/faq" className="learn-more">
+                  Learn more about timing →
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="faq-cta">
+          <p>Need more information?</p>
+          <Link to="/faq" className="view-all-faq">
+            View All FAQs
+          </Link>
         </div>
       </section>
-
-      <section className="impact-section">
-        <h2>Our Amazing Superheroes Behind the Scenes</h2>
-        <p>
-          We are a committed team dedicated to making community funding
-          accessible to everyone.
-        </p>
-      </section>
-
-      <section className="contact-section">
-        <div className="contact-card">
-          <h3>Do you have any questions?</h3>
-          <p>Feel free to reach out to us</p>
-          <Button className="contact-button">Contact Us</Button>
-        </div>
-      </section>
-
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-logo">
-            <Link to="/">Community Funding</Link>
-          </div>
-          <div className="footer-links">
-            <Link to="/about">About</Link>
-            <Link to="/contact">Contact</Link>
-            <Link to="/campaigns">Campaigns</Link>
-            <Link to="/login">Login</Link>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>
-            &copy; {new Date().getFullYear()} Community Funding. All rights
-            reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

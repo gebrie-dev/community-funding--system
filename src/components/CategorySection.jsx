@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import "./CategorySection.css";
 
@@ -8,54 +9,68 @@ const categories = [
     name: "Education",
     description:
       "Support educational initiatives and help students achieve their academic goals.",
-    icon: "/images/categories/education-icon.png",
+    image: "/images/categories/education-icon.png",
+    path: "/campaigns/education",
   },
   {
     id: 2,
     name: "Healthcare",
     description:
       "Contribute to medical research and healthcare access for those in need.",
-    icon: "/images/categories/medical-icon.png",
+    image: "/images/categories/medical-icon.png",
+    path: "/campaigns/healthcare",
   },
   {
     id: 3,
     name: "Social Impact",
     description:
       "Support environmental conservation and sustainable development projects.",
-    icon: "/images/categories/social-impact-icon.png",
+    image: "/images/categories/social-impact-icon.png",
+    path: "/campaigns/social",
   },
   {
     id: 4,
     name: "Emergency",
     description:
       "Fund innovative tech projects and digital solutions for social impact.",
-    icon: "/images/categories/emergency-icon.png",
+    image: "/images/categories/emergency-icon.png",
+    path: "/campaigns/emergency",
   },
 ];
 
 const CategorySection = () => {
-  const { isDarkMode } = useTheme();
+  const { darkMode } = useTheme();
 
   return (
-    <section className={`category-section ${isDarkMode ? "dark" : ""}`}>
+    <section className={`category-section ${darkMode ? "dark" : ""}`}>
       <div className="category-container">
-        <h2 className="category-heading">Explore Categories</h2>
+        <div className="category-header">
+          <h2 className={`category-heading ${darkMode ? "dark" : ""}`}>
+            Explore Categories
+          </h2>
+          <p className={`category-subheading ${darkMode ? "dark" : ""}`}>
+            Discover and support causes that matter to you
+          </p>
+        </div>
         <div className="categories-grid">
           {categories.map((category) => (
-            <a
+            <Link
+              to={category.path}
               key={category.id}
-              href={`/category/${category.name.toLowerCase()}`}
-              className="category-card"
+              className={`category-card ${darkMode ? "dark" : ""}`}
             >
-              <div className="category-icon">
-                <img
-                  src={category.icon}
-                  alt={`Icon for ${category.name} category`}
-                />
+              <div className="category-image">
+                <img src={category.image} alt={category.name} />
               </div>
-              <h3 className="category-name">{category.name}</h3>
-              <p className="category-description">{category.description}</p>
-            </a>
+              <div className="category-content">
+                <h3 className={`category-name ${darkMode ? "dark" : ""}`}>
+                  {category.name}
+                </h3>
+                <p className={`category-description ${darkMode ? "dark" : ""}`}>
+                  {category.description}
+                </p>
+              </div>
+            </Link>
           ))}
         </div>
       </div>

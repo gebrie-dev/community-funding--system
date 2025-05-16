@@ -10,4 +10,15 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-export const app = initializeApp(firebaseConfig);
+// Log the config (without sensitive data)
+console.log("Firebase config loaded:", {
+  authDomain: firebaseConfig.authDomain,
+  projectId: firebaseConfig.projectId,
+  storageBucket: firebaseConfig.storageBucket,
+});
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+console.log("Firebase app initialized:", app.name);
+
+export { app };
