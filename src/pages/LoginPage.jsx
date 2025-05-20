@@ -7,8 +7,7 @@ import {
   FaLock,
   FaEye,
   FaEyeSlash,
-  FaGoogle,
-  FaGithub,
+  FaShieldAlt,
 } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
 import "./LoginPage.css";
@@ -18,47 +17,48 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { signIn, signInWithGoogle, signInWithGithub } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signInWithGoogle, signInWithFacebook } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
     try {
-      setError("");
-      setLoading(true);
       await signIn(email, password);
       navigate("/dashboard");
     } catch (err) {
-      setError("Failed to sign in. Please check your credentials.");
+      setError("Invalid email or password. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
     try {
       setError("");
-      setLoading(true);
+      setIsLoading(true);
       await signInWithGoogle();
       navigate("/dashboard");
     } catch (err) {
-      setError("Failed to sign in with Google.");
+      setError("Failed to sign in with Google. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleGithubSignIn = async () => {
+  const handleFacebookSignIn = async () => {
     try {
       setError("");
-      setLoading(true);
-      await signInWithGithub();
+      setIsLoading(true);
+      await signInWithFacebook();
       navigate("/dashboard");
     } catch (err) {
-      setError("Failed to sign in with GitHub.");
+      setError("Failed to sign in with Facebook. Please try again.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -68,54 +68,63 @@ const LoginPage = () => {
         <div className="login-left">
           <div className="login-header">
             <Link to="/" className="logo-link">
-              <img
-                src="/icons/logo.png"
-                alt="Community Logo"
-                className="logo"
-              />
+              <img src="/icons/logo.png" alt="Logo" className="logo" />
             </Link>
             <div className="auth-switch">
               <span>Don't have an account?</span>
               <Link to="/signup" className="auth-link">
-                Sign up!
+                Sign up
               </Link>
             </div>
           </div>
 
           <div className="login-form-container">
             <h1>Welcome Back!</h1>
-            <p className="login-subtitle">Sign in to continue your journey</p>
+            <p className="login-subtitle">
+              Sign in to access your community dashboard
+            </p>
 
-            {error && <div className="error-message">{error}</div>}
+            {error && (
+              <div className="error-message">
+                <FaShieldAlt />
+                <span>{error}</span>
+              </div>
+            )}
 
             <div className="social-auth">
               <button
-                type="button"
-                className="social-button"
+                className="social-button google"
                 onClick={handleGoogleSignIn}
-                disabled={loading}
+                disabled={isLoading}
               >
-                <FaGoogle />
-                <span>Google</span>
+                <img
+                  src="/icons/google.svg"
+                  alt="Google"
+                  className="social-icon"
+                />
+                <span>Continue with Google</span>
               </button>
               <button
-                type="button"
-                className="social-button"
-                onClick={handleGithubSignIn}
-                disabled={loading}
+                className="social-button facebook"
+                onClick={handleFacebookSignIn}
+                disabled={isLoading}
               >
-                <FaGithub />
-                <span>GitHub</span>
+                <img
+                  src="/icons/facebook.svg"
+                  alt="Facebook"
+                  className="social-icon"
+                />
+                <span>Continue with Facebook</span>
               </button>
             </div>
 
             <div className="login-divider">
-              <span>Or continue with email</span>
+              <span>or continue with email</span>
             </div>
 
-            <form className="login-form" onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="login-form">
               <div className="form-group">
-                <label htmlFor="email">Email</label>
+                <label htmlFor="email">Email Address</label>
                 <div className="input-with-icon">
                   <FaEnvelope className="input-icon" />
                   <input
@@ -123,8 +132,9 @@ const LoginPage = () => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    required
                     placeholder="Enter your email"
+                    required
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -138,13 +148,15 @@ const LoginPage = () => {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    required
                     placeholder="Enter your password"
+                    required
+                    disabled={isLoading}
                   />
                   <button
                     type="button"
                     className="password-toggle"
                     onClick={() => setShowPassword(!showPassword)}
+                    disabled={isLoading}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
@@ -153,12 +165,16 @@ const LoginPage = () => {
 
               <div className="form-options">
                 <Link to="/forgot-password" className="forgot-password">
-                  Forgot Password?
+                  Forgot password?
                 </Link>
               </div>
 
-              <button type="submit" className="login-button" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+              <button
+                type="submit"
+                className="login-button"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in..." : "Sign in"}
               </button>
             </form>
           </div>
@@ -166,17 +182,20 @@ const LoginPage = () => {
 
         <div className="login-right">
           <div className="login-illustration">
-            <img src="/images/login-illustration.png" alt="Secure Login" />
+            <img
+              src="/images/login-illustration.png"
+              alt="Login Illustration"
+            />
           </div>
           <div className="login-message">
-            <div className="security-badge">
-              <span>Secure & Trusted</span>
-            </div>
-            <h2>Support, Fund, and Grow Together!</h2>
+            <h2>Join Our Community</h2>
             <p>
-              Create or contribute to community-driven projects and make a
-              difference today.
+              Connect with like-minded individuals, share ideas, and grow
+              together in a supportive environment.
             </p>
+            <div className="security-badge">
+              <FaShieldAlt /> Secure & Private
+            </div>
           </div>
         </div>
       </div>
