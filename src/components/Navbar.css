@@ -34,8 +34,19 @@
   transition: opacity 0.2s ease;
 }
 
+.navbar-logo .logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
 .navbar-logo:hover {
   opacity: 0.8;
+}
+
+.navbar-logo:hover .logo {
+  transform: scale(1.05);
 }
 
 .navbar-menu {
@@ -540,4 +551,27 @@
 .dark .mobile-menu-close:focus,
 .dark .mobile-menu-item:focus {
   outline-color: #60a5fa;
+}
+
+.launch-campaign-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+  margin-right: 1rem;
+}
+
+.launch-campaign-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.launch-campaign-btn svg {
+  color: white;
 }

@@ -104,37 +104,6 @@ const CampaignCard = ({ campaign }) => {
           </div>
         </div>
 
-        <div className="progress-stats">
-          <div className="stat" aria-label={`Goal amount: $${formattedGoal}`}>
-            <div className="stat-icon">
-              <DollarSign size={16} aria-hidden="true" />
-            </div>
-            <div className="stat-info">
-              <span className="stat-value">${formattedGoal}</span>
-              <span className="stat-label">Goal</span>
-            </div>
-          </div>
-
-          <div className="stat" aria-label={`${daysLeft} days remaining`}>
-            <div className="stat-icon">
-              <Clock size={16} aria-hidden="true" />
-            </div>
-            <div className="stat-info">
-              <span className="stat-value">{daysLeft}</span>
-              <span className="stat-label">Days Left</span>
-            </div>
-          </div>
-
-          <div className="stat" aria-label={`${donorCount} donors`}>
-            <div className="stat-icon">
-              <Users size={16} aria-hidden="true" />
-            </div>
-            <div className="stat-info">
-              <span className="stat-value">{donorCount}</span>
-              <span className="stat-label">Donors</span>
-            </div>
-          </div>
-        </div>
 
         <div className="campaign-actions">
           <Link

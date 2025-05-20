@@ -14,7 +14,7 @@ const categories = [
   },
   {
     id: 2,
-    name: "Healthcare",
+    name: "Medical",
     description:
       "Contribute to medical research and healthcare access for those in need.",
     image: "/images/categories/medical-icon.png",

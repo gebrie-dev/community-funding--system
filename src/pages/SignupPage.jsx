@@ -125,7 +125,7 @@ const SignupPage = () => {
         <div className="signup-right">
           <div className="signup-header">
             <Link to="/" className="logo-link">
-              <Logo />
+              <img src="/icons/logo.png" alt="Community Logo" className="logo" />
             </Link>
             <div className="auth-switch">
               <span>Already have an account?</span>

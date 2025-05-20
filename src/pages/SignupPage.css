@@ -85,6 +85,12 @@
   align-items: center;
 }
 
+.logo-link .logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
 .auth-switch {
   display: flex;
   align-items: center;

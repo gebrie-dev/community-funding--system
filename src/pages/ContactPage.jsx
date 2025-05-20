@@ -189,8 +189,6 @@ const ContactPage = () => {
                 )}
               </div>
 
-              
-
               <div className="form-group">
                 <label htmlFor="subject">Subject</label>
                 <input

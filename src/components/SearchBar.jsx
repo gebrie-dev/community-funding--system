@@ -31,11 +31,10 @@ const SearchBar = ({ onSearch }) => {
         className="category-select"
       >
         <option value="all">All Categories</option>
-        <option value="disaster">Disaster Relief</option>
         <option value="education">Education</option>
         <option value="medical">Medical</option>
-        <option value="community">Community</option>
-        <option value="environment">Environment</option>
+        <option value="community">Emergency</option>
+        <option value="environment">Social impact</option>
       </select>
       
       <button type="submit" className="search-button">Search</button>

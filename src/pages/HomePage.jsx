@@ -8,6 +8,7 @@ import SearchBar from "../components/SearchBar";
 import CategorySection from "../components/CategorySection";
 import { Heart, Users, Clock, Shield, CreditCard } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import ChatBot from "../components/ChatBot";
 import "./HomePage.css";
 
 const HomePage = () => {
@@ -278,6 +279,8 @@ const HomePage = () => {
           </Link>
         </div>
       </section>
+
+      <ChatBot />
     </div>
   );
 };
