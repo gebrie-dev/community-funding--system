@@ -80,6 +80,9 @@ const PaymentMethodPage = () => {
         </div>
 
         <div className="amount-container">
+        
+         <label>phone number</label>
+
           <label>Amount</label>
           <div className="amount-input-group">
             <input type="text" value={amount} onChange={handleAmountChange} className="amount-input" />
