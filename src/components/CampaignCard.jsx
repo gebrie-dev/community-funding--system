@@ -1,39 +1,37 @@
-"use client"
-
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import Button from "./Button"
-import "./CampaignCard.css"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Button from "./Button";
+import "./CampaignCard.css";
 
 const CampaignCard = ({ campaign }) => {
-  const navigate = useNavigate()
-  const [isSaved, setIsSaved] = useState(false)
-  const [imageLoaded, setImageLoaded] = useState(false)
+  const navigate = useNavigate();
+  const [isSaved, setIsSaved] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  const progress = Math.min((campaign.raised / campaign.goal) * 100, 100)
+  const progress = Math.min((campaign.raised / campaign.goal) * 100, 100);
 
   // Function to handle navigation to PaymentMethodPage
   const handleSupportClick = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    navigate(`/campaigns/${campaign.id}/payment`)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/campaigns/${campaign.id}/payment`);
+  };
 
   // Function to handle navigation to campaign details
   const handleViewDetails = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    navigate(`/campaigns/${campaign.id}`)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(`/campaigns/${campaign.id}`);
+  };
 
   // Function to handle save/bookmark toggle
   const handleSaveToggle = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsSaved(!isSaved)
+    e.preventDefault();
+    e.stopPropagation();
+    setIsSaved(!isSaved);
     // Here you can add API call to save/unsave campaign
-    console.log(`Campaign ${campaign.id} ${isSaved ? "unsaved" : "saved"}`)
-  }
+    console.log(`Campaign ${campaign.id} ${isSaved ? "unsaved" : "saved"}`);
+  };
 
   // Format currency
   const formatCurrency = (amount) => {
@@ -42,8 +40,8 @@ const CampaignCard = ({ campaign }) => {
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   return (
     <div className="campaign-card">
@@ -88,19 +86,29 @@ const CampaignCard = ({ campaign }) => {
         </Link>
 
         <p className="campaign-description">
-          {campaign.description.length > 100 ? `${campaign.description.slice(0, 100)}...` : campaign.description}
+          {campaign.description.length > 100
+            ? `${campaign.description.slice(0, 100)}...`
+            : campaign.description}
         </p>
 
         {/* Progress Section */}
         <div className="campaign-progress">
           <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+            <div
+              className="progress-bar"
+              style={{ width: `${progress}%` }}
+            ></div>
           </div>
 
           <div className="progress-info">
             <div className="progress-amounts">
-              <span className="amount-raised">{formatCurrency(campaign.raised)}</span>
-              <span className="amount-goal"> raised of {formatCurrency(campaign.goal)}</span>
+              <span className="amount-raised">
+                {formatCurrency(campaign.raised)}
+              </span>
+              <span className="amount-goal">
+                {" "}
+                raised of {formatCurrency(campaign.goal)}
+              </span>
             </div>
             <span className="progress-percentage">{progress.toFixed(0)}%</span>
           </div>
@@ -110,7 +118,13 @@ const CampaignCard = ({ campaign }) => {
             <div className="progress-stats">
               {campaign.backers && (
                 <div className="stat">
-                  <svg className="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    className="stat-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -121,7 +135,13 @@ const CampaignCard = ({ campaign }) => {
               )}
               {campaign.daysLeft && (
                 <div className="stat">
-                  <svg className="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    className="stat-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                     <line x1="16" y1="2" x2="16" y2="6" />
                     <line x1="8" y1="2" x2="8" y2="6" />
@@ -137,7 +157,11 @@ const CampaignCard = ({ campaign }) => {
 
       {/* Action Buttons */}
       <div className="campaign-actions">
-        <Button onClick={handleViewDetails} className="view-details-button" variant="outline">
+        <Button
+          onClick={handleViewDetails}
+          className="view-details-button"
+          variant="outline"
+        >
           <svg
             width="14"
             height="14"
@@ -172,7 +196,7 @@ const CampaignCard = ({ campaign }) => {
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CampaignCard
+export default CampaignCard;

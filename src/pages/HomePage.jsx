@@ -1,11 +1,9 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Link } from "react-router-dom"
-import Navbar from "../components/Navbar"
-import Button from "../components/Button"
-import CampaignCard from "../components/CampaignCard"
-import CategorySection from "../components/CategorySection"
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import Button from "../components/Button";
+import CampaignCard from "../components/CampaignCard";
+import CategorySection from "../components/CategorySection";
 import {
   Heart,
   Users,
@@ -18,46 +16,46 @@ import {
   ArrowRight,
   Play,
   Star,
-} from "lucide-react"
-import { useTheme } from "../context/ThemeContext"
-import ChatBot from "../components/ChatBot"
-import { api } from "../utils/api"
-import { API_ENDPOINTS } from "../config/api"
-import "./HomePage.css"
+} from "lucide-react";
+import { useTheme } from "../context/ThemeContext";
+import ChatBot from "../components/ChatBot";
+import { api } from "../utils/api";
+import { API_ENDPOINTS } from "../config/api";
+import "./HomePage.css";
 
 const HomePage = () => {
-  const [featuredCampaigns, setFeaturedCampaigns] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const { darkMode } = useTheme()
+  const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { darkMode } = useTheme();
 
   // Fetch campaigns from the API
   useEffect(() => {
     const fetchCampaigns = async () => {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
       try {
-        console.log("Fetching campaigns from:", API_ENDPOINTS.CAMPAIGNS)
-        const response = await api.get(API_ENDPOINTS.CAMPAIGNS)
+        console.log("Fetching campaigns from:", API_ENDPOINTS.CAMPAIGNS);
+        const response = await api.get(API_ENDPOINTS.CAMPAIGNS);
         // Normalize category to lowercase for frontend consistency
         const normalizedCampaigns = response.map((campaign) => ({
           ...campaign,
           category: campaign.category ? campaign.category.toLowerCase() : "",
-        }))
-        console.log("Fetched campaigns:", normalizedCampaigns)
+        }));
+        console.log("Fetched campaigns:", normalizedCampaigns);
 
         // Get only the first 3 campaigns for the featured section
-        setFeaturedCampaigns(normalizedCampaigns.slice(0, 3))
+        setFeaturedCampaigns(normalizedCampaigns.slice(0, 3));
       } catch (err) {
-        console.error("Error fetching campaigns:", err)
-        setError("Failed to load campaigns. Please try again later.")
+        console.error("Error fetching campaigns:", err);
+        setError("Failed to load campaigns. Please try again later.");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    fetchCampaigns()
-  }, [])
+    fetchCampaigns();
+  }, []);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat("en-US", {
@@ -65,8 +63,8 @@ const HomePage = () => {
       currency: "USD",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount)
-  }
+    }).format(amount);
+  };
 
   return (
     <div className={`home-page ${darkMode ? "dark" : ""}`}>
@@ -85,7 +83,8 @@ const HomePage = () => {
             </div>
             <h1>Raise Funds for Causes That Matter!</h1>
             <p>
-              Join a growing community dedicated to supporting important causes. Your change makes a difference today.
+              Join a growing community dedicated to supporting important causes.
+              Your change makes a difference today.
             </p>
             <div className="hero-actions">
               <Link to="/create-campaign">
@@ -98,7 +97,11 @@ const HomePage = () => {
           </div>
           <div className="hero-visual">
             <div className="hero-image-container">
-              <img src="/images/community-funding.png" alt="Community Impact" className="hero-image" />
+              <img
+                src="/images/community-funding.png"
+                alt="Community Impact"
+                className="hero-image"
+              />
               <div className="floating-card card-1">
                 <div className="card-icon">
                   <Heart size={20} />
@@ -127,7 +130,9 @@ const HomePage = () => {
         <div className="features-container">
           <div className="section-header">
             <h2>Why Choose Our Platform?</h2>
-            <p>Trusted by thousands of donors and campaign creators worldwide</p>
+            <p>
+              Trusted by thousands of donors and campaign creators worldwide
+            </p>
           </div>
           <div className="features-grid">
             <div className="feature-card">
@@ -136,8 +141,8 @@ const HomePage = () => {
               </div>
               <h3>100% Secure</h3>
               <p>
-                Bank-level security with 256-bit SSL encryption. Your donations are protected and reach their
-                destination safely.
+                Bank-level security with 256-bit SSL encryption. Your donations
+                are protected and reach their destination safely.
               </p>
               <div className="feature-badge">
                 <CheckCircle size={14} />
@@ -151,7 +156,8 @@ const HomePage = () => {
               </div>
               <h3>Instant Impact</h3>
               <p>
-                Funds are transferred quickly to campaign creators, ensuring immediate help for those who need it most.
+                Funds are transferred quickly to campaign creators, ensuring
+                immediate help for those who need it most.
               </p>
               <div className="feature-badge">
                 <CheckCircle size={14} />
@@ -165,8 +171,8 @@ const HomePage = () => {
               </div>
               <h3>Global Community</h3>
               <p>
-                Join thousands of compassionate individuals making a difference in communities across Ethiopia and
-                beyond.
+                Join thousands of compassionate individuals making a difference
+                in communities across Ethiopia and beyond.
               </p>
               <div className="feature-badge">
                 <CheckCircle size={14} />
@@ -180,7 +186,8 @@ const HomePage = () => {
               </div>
               <h3>Proven Results</h3>
               <p>
-                98% of campaigns reach their goals with our platform's powerful tools and engaged community support.
+                98% of campaigns reach their goals with our platform's powerful
+                tools and engaged community support.
               </p>
               <div className="feature-badge">
                 <CheckCircle size={14} />
@@ -214,7 +221,10 @@ const HomePage = () => {
                 <h3>Couldn't load campaigns</h3>
                 <p>{error}</p>
               </div>
-              <Button className="retry-button" onClick={() => window.location.reload()}>
+              <Button
+                className="retry-button"
+                onClick={() => window.location.reload()}
+              >
                 Try Again
               </Button>
             </div>
@@ -251,7 +261,10 @@ const HomePage = () => {
                 <Star size={16} />
                 <span>Success Story</span>
               </div>
-              <h3>Thanks to this platform, I funded my medical bills in just two weeks!</h3>
+              <h3>
+                Thanks to this platform, I funded my medical bills in just two
+                weeks!
+              </h3>
               <div className="story-author">
                 <div className="author-info">
                   <h4>Sarah Tadesse</h4>
@@ -296,7 +309,10 @@ const HomePage = () => {
               </div>
               <div className="faq-content">
                 <h3>What payment methods do you accept?</h3>
-                <p>We accept Chapa, PayPal, and all major credit cards. All transactions are secure and encrypted.</p>
+                <p>
+                  We accept Chapa, PayPal, and all major credit cards. All
+                  transactions are secure and encrypted.
+                </p>
                 <Link to="/faq" className="learn-more">
                   Learn more about payments <ArrowRight size={14} />
                 </Link>
@@ -308,7 +324,10 @@ const HomePage = () => {
               </div>
               <div className="faq-content">
                 <h3>How do you verify campaigns?</h3>
-                <p>All campaigns undergo thorough verification including identity checks and documentation review.</p>
+                <p>
+                  All campaigns undergo thorough verification including identity
+                  checks and documentation review.
+                </p>
                 <Link to="/faq" className="learn-more">
                   Learn more about verification <ArrowRight size={14} />
                 </Link>
@@ -320,7 +339,10 @@ const HomePage = () => {
               </div>
               <div className="faq-content">
                 <h3>How do I start a campaign?</h3>
-                <p>Create an account, click "Start Your Campaign", and follow our simple step-by-step guide.</p>
+                <p>
+                  Create an account, click "Start Your Campaign", and follow our
+                  simple step-by-step guide.
+                </p>
                 <Link to="/faq" className="learn-more">
                   Learn more about campaigns <ArrowRight size={14} />
                 </Link>
@@ -332,7 +354,10 @@ const HomePage = () => {
               </div>
               <div className="faq-content">
                 <h3>How long do campaigns run?</h3>
-                <p>Campaigns can run for up to 60 days, with options to extend or create new ones if needed.</p>
+                <p>
+                  Campaigns can run for up to 60 days, with options to extend or
+                  create new ones if needed.
+                </p>
                 <Link to="/faq" className="learn-more">
                   Learn more about timing <ArrowRight size={14} />
                 </Link>
@@ -354,7 +379,10 @@ const HomePage = () => {
         <div className="cta-container">
           <div className="cta-content">
             <h2>Ready to Make a Difference?</h2>
-            <p>Join thousands of people who are already creating positive change in their communities.</p>
+            <p>
+              Join thousands of people who are already creating positive change
+              in their communities.
+            </p>
             <div className="cta-actions">
               <Link to="/create-campaign">
                 <Button className="cta-primary">
@@ -372,7 +400,7 @@ const HomePage = () => {
 
       <ChatBot />
     </div>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

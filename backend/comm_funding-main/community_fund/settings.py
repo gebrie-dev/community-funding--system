@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'system_validator',
     'video_app',
     'corsheaders',
+     'drf_yasg',
     
 
 
@@ -220,4 +221,5 @@ EXCHANGE_RATE_API_KEY = config('EXCHANGE_RATE_API_KEY')
 CHAPA_TEST_PUBLIC_KEY = config('CHAPA_TEST_PUBLIC_KEY')
 CHAPA_TEST_SECRET_KEY = config('CHAPA_TEST_SECRET_KEY')
 CHAPA_TEST_CALLBACK_URL = config('CHAPA_TEST_CALLBACK_URL')
+FRONTEND_URL = config('FRONTEND_URL')
 SITE_URL = config('SITE_URL')

@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { Send, X, MessageSquare, Lightbulb } from "lucide-react";
 import "./ChatbotRecommendation.css";

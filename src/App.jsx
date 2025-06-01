@@ -1,5 +1,3 @@
-"use client";
-
 import {
   BrowserRouter as Router,
   Routes,
@@ -73,7 +71,7 @@ const AdminRoute = ({ children }) => {
   // Check if user is a staff member
   if (!currentUser.is_staff) {
     console.log("User is not a staff member, redirecting to home");
-    console.log(currentUser)
+    console.log(currentUser);
     return <Navigate to="/" replace />;
   }
 
@@ -92,102 +90,108 @@ function App() {
     <AuthProvider>
       <ThemeProvider>
         <NotificationProvider>
-         <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/reset-success" element={<ResetSuccessPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/email-verified" element={<EmailVerificationPage />} />
+          <Router>
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<HomePage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/reset-password" element={<ResetPasswordPage />} />
+              <Route path="/reset-success" element={<ResetSuccessPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route
+                path="/email-verified"
+                element={<EmailVerificationPage />}
+              />
 
-        {/* Campaign-Related Routes */}
-        <Route path="/campaigns" element={<CampaignsPage />} />
-        <Route path="/campaigns/:id" element={<CampaignDetailsPage />} />
-        <Route path="/campaigns/:id/payment" element={<PaymentMethodPage />} />
-        <Route
-          path="/campaigns/:id/withdraw"
-          element={
-            // Add authentication check, e.g., <ProtectedRoute element={<WithdrawPage />} />
-            <WithdrawPage />
-          }
-        />
-        <Route
-          path="/create-campaign"
-          element={
-            // Add authentication check, e.g., <ProtectedRoute element={<CampaignCreationPage />} />
-            <CampaignCreationPage />
-          }
-        />
+              {/* Campaign-Related Routes */}
+              <Route path="/campaigns" element={<CampaignsPage />} />
+              <Route path="/campaigns/:id" element={<CampaignDetailsPage />} />
+              <Route
+                path="/campaigns/:id/payment"
+                element={<PaymentMethodPage />}
+              />
+              <Route
+                path="/campaigns/:id/withdraw"
+                element={
+                  // Add authentication check, e.g., <ProtectedRoute element={<WithdrawPage />} />
+                  <WithdrawPage />
+                }
+              />
+              <Route
+                path="/create-campaign"
+                element={
+                  // Add authentication check, e.g., <ProtectedRoute element={<CampaignCreationPage />} />
+                  <CampaignCreationPage />
+                }
+              />
 
-        {/* Payment and Success Routes */}
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/payment-success" element={<PaymentSuccessPage />} />
+              {/* Payment and Success Routes */}
+              <Route path="/success" element={<SuccessPage />} />
+              <Route path="/payment-success" element={<PaymentSuccessPage />} />
 
-        {/* User Dashboard Route */}
-        <Route
-          path="/dashboard"
-          element={
-            // Add authentication check, e.g., <ProtectedRoute element={<DashboardPage />} />
-            <DashboardPage />
-          }
-        />
+              {/* User Dashboard Route */}
+              <Route
+                path="/dashboard"
+                element={
+                  // Add authentication check, e.g., <ProtectedRoute element={<DashboardPage />} />
+                  <DashboardPage />
+                }
+              />
 
-        {/* Admin Routes */}
-        <Route
-          path="/admin"
-          element={
-            // Add admin authorization check, e.g., <ProtectedRoute element={<AdminDashboard />} role="admin" />
-            <AdminDashboard />
-          }
-        />
-        <Route
-          path="/admin/campaigns"
-          element={
-            // Add admin authorization check
-            <AdminCampaigns />
-          }
-        />
-        <Route
-          path="/admin/users"
-          element={
-            // Add admin authorization check
-            <AdminUsers />
-          }
-        />
-        <Route
-          path="/admin/reports"
-          element={
-            // Add admin authorization check
-            <AdminReports />
-          }
-        />
-        <Route
-          path="/admin/withdrawals"
-          element={
-            // Add admin authorization check
-            <AdminWithdrawals />
-          }
-        />
-        <Route
-          path="/admin/messages"
-          element={
-            // Add admin authorization check
-            <AdminMessagesPage />
-          }
-        />
+              {/* Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  // Add admin authorization check, e.g., <ProtectedRoute element={<AdminDashboard />} role="admin" />
+                  <AdminDashboard />
+                }
+              />
+              <Route
+                path="/admin/campaigns"
+                element={
+                  // Add admin authorization check
+                  <AdminCampaigns />
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  // Add admin authorization check
+                  <AdminUsers />
+                }
+              />
+              <Route
+                path="/admin/reports"
+                element={
+                  // Add admin authorization check
+                  <AdminReports />
+                }
+              />
+              <Route
+                path="/admin/withdrawals"
+                element={
+                  // Add admin authorization check
+                  <AdminWithdrawals />
+                }
+              />
+              <Route
+                path="/admin/messages"
+                element={
+                  // Add admin authorization check
+                  <AdminMessagesPage />
+                }
+              />
 
-        {/* Catch-All Route for 404 */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-      <Footer />
-    </Router>
+              {/* Catch-All Route for 404 */}
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+            <Footer />
+          </Router>
         </NotificationProvider>
       </ThemeProvider>
     </AuthProvider>

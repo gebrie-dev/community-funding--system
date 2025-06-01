@@ -1,6 +1,4 @@
-"use client"
-
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Flag,
@@ -12,16 +10,16 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
-} from "lucide-react"
-import Logo from "../Logo"
-import "./AdminSidebar.css"
+} from "lucide-react";
+import Logo from "../Logo";
+import "./AdminSidebar.css";
 
 const AdminSidebar = ({ collapsed, toggleCollapse }) => {
-  const location = useLocation()
+  const location = useLocation();
 
   const isActive = (path) => {
-    return location.pathname === path
-  }
+    return location.pathname === path;
+  };
 
   return (
     <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
@@ -44,25 +42,37 @@ const AdminSidebar = ({ collapsed, toggleCollapse }) => {
             </Link>
           </li>
           <li>
-            <Link to="/admin/campaigns" className={isActive("/admin/campaigns") ? "active" : ""}>
+            <Link
+              to="/admin/campaigns"
+              className={isActive("/admin/campaigns") ? "active" : ""}
+            >
               <Flag size={20} />
               {!collapsed && <span>Campaigns</span>}
             </Link>
           </li>
           <li>
-            <Link to="/admin/users" className={isActive("/admin/users") ? "active" : ""}>
+            <Link
+              to="/admin/users"
+              className={isActive("/admin/users") ? "active" : ""}
+            >
               <Users size={20} />
               {!collapsed && <span>Users</span>}
             </Link>
           </li>
           <li>
-            <Link to="/admin/withdrawals" className={isActive("/admin/withdrawals") ? "active" : ""}>
+            <Link
+              to="/admin/withdrawals"
+              className={isActive("/admin/withdrawals") ? "active" : ""}
+            >
               <DollarSign size={20} />
               {!collapsed && <span>Withdrawals</span>}
             </Link>
           </li>
           <li>
-            <Link to="/admin/reports" className={isActive("/admin/reports") ? "active" : ""}>
+            <Link
+              to="/admin/reports"
+              className={isActive("/admin/reports") ? "active" : ""}
+            >
               <FileText size={20} />
               {!collapsed && <span>Reports</span>}
             </Link>
@@ -94,7 +104,7 @@ const AdminSidebar = ({ collapsed, toggleCollapse }) => {
         </ul>
       </div>
     </aside>
-  )
-}
+  );
+};
 
-export default AdminSidebar
+export default AdminSidebar;

@@ -351,19 +351,7 @@ const FAQPage = () => {
                   Call Now
                 </a>
               </div>
-              <div className="contact-option">
-                <div className="contact-option-icon">
-                  <MessageCircle size={24} />
-                </div>
-                <div className="contact-option-content">
-                  <h3>Live Chat</h3>
-                  <p>Chat with support</p>
-                  <span className="response-time">Available 24/7</span>
-                </div>
-                <button className="contact-button" onClick={() => window.chatWidget?.open()}>
-                  Start Chat
-                </button>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -382,10 +370,7 @@ const FAQPage = () => {
             <div className="stat-number">24/7</div>
             <div className="stat-label">Support Available</div>
           </div>
-          <div className="stat-item">
-            <div className="stat-number">50+</div>
-            <div className="stat-label">Common Questions</div>
-          </div>
+          
         </div>
       </div>
     </div>

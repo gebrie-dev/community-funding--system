@@ -1,8 +1,14 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, CreditCard, Smartphone, Shield, CheckCircle, Mail, Phone } from 'lucide-react';
+import {
+  ArrowLeft,
+  CreditCard,
+  Smartphone,
+  Shield,
+  CheckCircle,
+  Mail,
+  Phone,
+} from "lucide-react";
 import "./withdrawPage.css";
 import { api } from "../utils/api";
 import { API_ENDPOINTS } from "../config/api";
@@ -35,7 +41,7 @@ export default function WithdrawPage() {
   useEffect(() => {
     if (successMessage) {
       const timer = setTimeout(() => {
-        navigate('/'); // Redirect to homepage after 5 seconds
+        navigate("/"); // Redirect to homepage after 5 seconds
       }, 5000);
       return () => clearTimeout(timer); // Cleanup timer on component unmount
     }
@@ -87,13 +93,16 @@ export default function WithdrawPage() {
       }
       value = value.substring(0, 9);
       if (value.length >= 1) {
-        value = value.replace(/(\d{1})(\d{0,2})(\d{0,3})(\d{0,3})/, (match, p1, p2, p3, p4) => {
-          let formatted = p1;
-          if (p2) formatted += ` ${p2}`;
-          if (p3) formatted += ` ${p3}`;
-          if (p4) formatted += ` ${p4}`;
-          return formatted;
-        });
+        value = value.replace(
+          /(\d{1})(\d{0,2})(\d{0,3})(\d{0,3})/,
+          (match, p1, p2, p3, p4) => {
+            let formatted = p1;
+            if (p2) formatted += ` ${p2}`;
+            if (p3) formatted += ` ${p3}`;
+            if (p4) formatted += ` ${p4}`;
+            return formatted;
+          }
+        );
       }
     }
     setPhoneNumber(value);
@@ -122,7 +131,10 @@ export default function WithdrawPage() {
     if (!amount || Number.parseFloat(amount) <= 0) {
       newErrors.amount = "Please enter a valid amount";
     }
-    if (selectedMethod?.requiresPhone && (!phoneNumber || phoneNumber.replace(/\s/g, "").length < 9)) {
+    if (
+      selectedMethod?.requiresPhone &&
+      (!phoneNumber || phoneNumber.replace(/\s/g, "").length < 9)
+    ) {
       newErrors.phoneNumber = "Please enter a valid Ethiopian phone number";
     }
     if (selectedMethod?.requiresEmail && (!email || !validateEmail(email))) {
@@ -131,7 +143,7 @@ export default function WithdrawPage() {
     if (!campaignId) {
       newErrors.campaign = "Campaign ID is missing from the URL";
     }
-    if (!['ETB', 'USD'].includes(currency)) {
+    if (!["ETB", "USD"].includes(currency)) {
       newErrors.currency = "Please select a valid currency (ETB or USD)";
     }
     setErrors(newErrors);
@@ -151,14 +163,16 @@ export default function WithdrawPage() {
     const payload = {
       campaign_id: campaignId,
       amount: Number.parseFloat(amount).toFixed(2),
-      convert_to: currency.toLowerCase() === 'etb' ? 'birr' : 'usd',
+      convert_to: currency.toLowerCase() === "etb" ? "birr" : "usd",
       payment_method: selectedMethod.id,
-      ...(selectedMethod.id === 'paypal' && { recipient_email: email }),
-      ...(selectedMethod.id === 'chapa' && { recipient_phone: `+251${phoneNumber.replace(/\s/g, "")}` }),
+      ...(selectedMethod.id === "paypal" && { recipient_email: email }),
+      ...(selectedMethod.id === "chapa" && {
+        recipient_phone: `+251${phoneNumber.replace(/\s/g, "")}`,
+      }),
     };
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       const response = await api.post(`${API_ENDPOINTS.withdraw}`, payload);
 
       // Success response
@@ -168,9 +182,14 @@ export default function WithdrawPage() {
     } catch (error) {
       console.error("Withdrawal failed:", error);
       if (error.response) {
-        setErrors({ submit: error.response.data.error || "Withdrawal failed. Please try again." });
+        setErrors({
+          submit:
+            error.response.data.error || "Withdrawal failed. Please try again.",
+        });
       } else {
-        setErrors({ submit: "Network error. Please check your connection and try again." });
+        setErrors({
+          submit: "Network error. Please check your connection and try again.",
+        });
       }
     } finally {
       setLoading(false);
@@ -229,12 +248,18 @@ export default function WithdrawPage() {
                     className={`amount-input ${errors.amount ? "error" : ""}`}
                     placeholder="0.00"
                   />
-                  <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="currency-select">
+                  <select
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                    className="currency-select"
+                  >
                     <option value="ETB">ETB</option>
                     <option value="USD">USD</option>
                   </select>
                 </div>
-                {errors.amount && <div className="error-message">{errors.amount}</div>}
+                {errors.amount && (
+                  <div className="error-message">{errors.amount}</div>
+                )}
               </div>
             </div>
             <div className="form-section">
@@ -243,26 +268,40 @@ export default function WithdrawPage() {
                 {paymentMethods.map((method) => (
                   <div
                     key={method.id}
-                    className={`withdraw-method ${selectedMethod?.id === method.id ? "selected" : ""}`}
+                    className={`withdraw-method ${
+                      selectedMethod?.id === method.id ? "selected" : ""
+                    }`}
                     onClick={() => handleMethodSelect(method)}
                   >
-                    <div className="method-icon" style={{ color: method.color }}>
+                    <div
+                      className="method-icon"
+                      style={{ color: method.color }}
+                    >
                       {method.icon}
                     </div>
                     <div className="method-info">
                       <h4>{method.name}</h4>
                       <p>{method.description}</p>
                     </div>
-                    <div className="method-check">{selectedMethod?.id === method.id && <CheckCircle size={20} />}</div>
+                    <div className="method-check">
+                      {selectedMethod?.id === method.id && (
+                        <CheckCircle size={20} />
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
-              {errors.method && <div className="error-message">{errors.method}</div>}
+              {errors.method && (
+                <div className="error-message">{errors.method}</div>
+              )}
             </div>
             {selectedMethod && (
               <div ref={detailsRef} className="withdraw-details">
                 <h3 className="details-title">
-                  <div className="details-icon" style={{ backgroundColor: selectedMethod.color }}>
+                  <div
+                    className="details-icon"
+                    style={{ backgroundColor: selectedMethod.color }}
+                  >
                     !
                   </div>
                   {selectedMethod.name} Details
@@ -282,7 +321,9 @@ export default function WithdrawPage() {
                         className={`text-input ${errors.email ? "error" : ""}`}
                         placeholder="your.email@example.com"
                       />
-                      {errors.email && <div className="error-message">{errors.email}</div>}
+                      {errors.email && (
+                        <div className="error-message">{errors.email}</div>
+                      )}
                       <div className="input-help">
                         {selectedMethod.id === "paypal"
                           ? "We'll send payment confirmation to this email immediately"
@@ -303,12 +344,20 @@ export default function WithdrawPage() {
                           id="phone"
                           value={phoneNumber}
                           onChange={handlePhoneNumberChange}
-                          className={`phone-input ${errors.phoneNumber ? "error" : ""}`}
+                          className={`phone-input ${
+                            errors.phoneNumber ? "error" : ""
+                          }`}
                           placeholder="9XX XXX XXX"
                         />
                       </div>
-                      {errors.phoneNumber && <div className="error-message">{errors.phoneNumber}</div>}
-                      <div className="input-help">Enter your Ethiopian mobile number for Chapa payment</div>
+                      {errors.phoneNumber && (
+                        <div className="error-message">
+                          {errors.phoneNumber}
+                        </div>
+                      )}
+                      <div className="input-help">
+                        Enter your Ethiopian mobile number for Chapa payment
+                      </div>
                     </div>
                   )}
                 </div>
@@ -348,7 +397,11 @@ export default function WithdrawPage() {
                 <div className="error-message">{errors.campaign}</div>
               </div>
             )}
-            <button type="submit" className="continue-button" disabled={loading || !selectedMethod}>
+            <button
+              type="submit"
+              className="continue-button"
+              disabled={loading || !selectedMethod}
+            >
               {loading ? (
                 <div className="loading-content">
                   <div className="spinner"></div>

@@ -1,14 +1,22 @@
-"use client"
+import "./Button.css";
 
-import "./Button.css"
-
-const Button = ({ children, onClick, type = "button", className = "", disabled = false }) => {
+const Button = ({
+  children,
+  onClick,
+  type = "button",
+  className = "",
+  disabled = false,
+}) => {
   return (
-    <button type={type} onClick={onClick} className={`custom-button ${className}`} disabled={disabled}>
+    <button
+      type={type}
+      onClick={onClick}
+      className={`custom-button ${className}`}
+      disabled={disabled}
+    >
       {children}
     </button>
-  )
-}
+  );
+};
 
-export default Button
-
+export default Button;

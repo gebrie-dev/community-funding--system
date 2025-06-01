@@ -1,38 +1,44 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import AdminLayout from "../../components/admin/AdminLayout"
-import AdminStats from "../../components/admin/AdminStats"
-import { BarChart, PieChart, LineChart, Calendar, Users, DollarSign, AlertTriangle } from "lucide-react"
-import "./AdminDashboard.css"
+import { useState, useEffect } from "react";
+import AdminLayout from "../../components/admin/AdminLayout";
+import AdminStats from "../../components/admin/AdminStats";
+import {
+  BarChart,
+  PieChart,
+  LineChart,
+  Calendar,
+  Users,
+  DollarSign,
+  AlertTriangle,
+} from "lucide-react";
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
-  console.log("AdminDashboard component rendering")
+  console.log("AdminDashboard component rendering");
 
   const [stats, setStats] = useState({
     totalDonations: 0,
     totalUsers: 0,
     activeCampaigns: 0,
     pendingWithdrawals: 0,
-  })
+  });
 
-  const [recentActivities, setRecentActivities] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Mock data fetch
     const fetchData = async () => {
       try {
-        console.log("Fetching admin dashboard data")
+        console.log("Fetching admin dashboard data");
         // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 800))
+        await new Promise((resolve) => setTimeout(resolve, 800));
 
         setStats({
           totalDonations: 125750,
           totalUsers: 1243,
           activeCampaigns: 48,
           pendingWithdrawals: 12,
-        })
+        });
 
         setRecentActivities([
           {
@@ -59,36 +65,42 @@ const AdminDashboard = () => {
             time: "1 hour ago",
           },
           { id: 4, type: "new_user", user: "Emma Wilson", time: "2 hours ago" },
-          { id: 5, type: "flagged", user: "Anonymous", campaign: "Suspicious Campaign", time: "3 hours ago" },
-        ])
+          {
+            id: 5,
+            type: "flagged",
+            user: "Anonymous",
+            campaign: "Suspicious Campaign",
+            time: "3 hours ago",
+          },
+        ]);
 
-        setLoading(false)
-        console.log("Admin dashboard data loaded")
+        setLoading(false);
+        console.log("Admin dashboard data loaded");
       } catch (error) {
-        console.error("Error fetching dashboard data:", error)
-        setLoading(false)
+        console.error("Error fetching dashboard data:", error);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchData()
-  }, [])
+    fetchData();
+  }, []);
 
   const getActivityIcon = (type) => {
     switch (type) {
       case "donation":
-        return <DollarSign size={16} className="activity-icon donation" />
+        return <DollarSign size={16} className="activity-icon donation" />;
       case "withdrawal":
-        return <DollarSign size={16} className="activity-icon withdrawal" />
+        return <DollarSign size={16} className="activity-icon withdrawal" />;
       case "new_campaign":
-        return <Calendar size={16} className="activity-icon campaign" />
+        return <Calendar size={16} className="activity-icon campaign" />;
       case "new_user":
-        return <Users size={16} className="activity-icon user" />
+        return <Users size={16} className="activity-icon user" />;
       case "flagged":
-        return <AlertTriangle size={16} className="activity-icon flagged" />
+        return <AlertTriangle size={16} className="activity-icon flagged" />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <AdminLayout>
@@ -138,7 +150,9 @@ const AdminDashboard = () => {
             </div>
             <div className="chart-container">
               <BarChart size={24} />
-              <p className="chart-placeholder">Bar Chart: Donation trends over time</p>
+              <p className="chart-placeholder">
+                Bar Chart: Donation trends over time
+              </p>
             </div>
           </div>
 
@@ -148,7 +162,9 @@ const AdminDashboard = () => {
             </div>
             <div className="chart-container">
               <PieChart size={24} />
-              <p className="chart-placeholder">Pie Chart: Campaign distribution by category</p>
+              <p className="chart-placeholder">
+                Pie Chart: Campaign distribution by category
+              </p>
             </div>
           </div>
 
@@ -163,7 +179,9 @@ const AdminDashboard = () => {
             </div>
             <div className="chart-container">
               <LineChart size={24} />
-              <p className="chart-placeholder">Line Chart: User growth over time</p>
+              <p className="chart-placeholder">
+                Line Chart: User growth over time
+              </p>
             </div>
           </div>
 
@@ -184,20 +202,22 @@ const AdminDashboard = () => {
                       <p className="activity-text">
                         {activity.type === "donation" && (
                           <>
-                            <strong>{activity.user}</strong> donated <strong>${activity.amount}</strong> to{" "}
+                            <strong>{activity.user}</strong> donated{" "}
+                            <strong>${activity.amount}</strong> to{" "}
                             <strong>{activity.campaign}</strong>
                           </>
                         )}
                         {activity.type === "withdrawal" && (
                           <>
-                            <strong>{activity.user}</strong> requested withdrawal of <strong>${activity.amount}</strong>{" "}
+                            <strong>{activity.user}</strong> requested
+                            withdrawal of <strong>${activity.amount}</strong>{" "}
                             from <strong>{activity.campaign}</strong>
                           </>
                         )}
                         {activity.type === "new_campaign" && (
                           <>
-                            <strong>{activity.user}</strong> created a new campaign:{" "}
-                            <strong>{activity.campaign}</strong>
+                            <strong>{activity.user}</strong> created a new
+                            campaign: <strong>{activity.campaign}</strong>
                           </>
                         )}
                         {activity.type === "new_user" && (
@@ -207,7 +227,8 @@ const AdminDashboard = () => {
                         )}
                         {activity.type === "flagged" && (
                           <>
-                            <strong>{activity.campaign}</strong> was flagged for review
+                            <strong>{activity.campaign}</strong> was flagged for
+                            review
                           </>
                         )}
                       </p>
@@ -221,7 +242,7 @@ const AdminDashboard = () => {
         </div>
       </div>
     </AdminLayout>
-  )
-}
+  );
+};
 
-export default AdminDashboard
+export default AdminDashboard;

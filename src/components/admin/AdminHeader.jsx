@@ -1,16 +1,14 @@
-"use client"
-
-import { useState } from "react"
-import { Bell, Search, User, Menu, Moon, Sun } from "lucide-react"
-import "./AdminHeader.css"
+import { useState } from "react";
+import { Bell, Search, User, Menu, Moon, Sun } from "lucide-react";
+import "./AdminHeader.css";
 
 const AdminHeader = ({ toggleSidebar }) => {
-  const [darkMode, setDarkMode] = useState(false)
+  const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
+    setDarkMode(!darkMode);
     // Here you would implement the actual dark mode toggle functionality
-  }
+  };
 
   return (
     <header className="admin-header">
@@ -48,7 +46,7 @@ const AdminHeader = ({ toggleSidebar }) => {
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default AdminHeader
+export default AdminHeader;

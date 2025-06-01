@@ -1,21 +1,21 @@
-"use client"
-
-import { useState } from "react"
-import { useLocation } from "react-router-dom"
-import AdminSidebar from "./AdminSidebar"
-import AdminHeader from "./AdminHeader"
-import "./AdminLayout.css"
+import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import AdminSidebar from "./AdminSidebar";
+import AdminHeader from "./AdminHeader";
+import "./AdminLayout.css";
 
 const AdminLayout = ({ children }) => {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
-  const location = useLocation()
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const location = useLocation();
 
   const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed)
-  }
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
 
   return (
-    <div className={`admin-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}>
+    <div
+      className={`admin-layout ${sidebarCollapsed ? "sidebar-collapsed" : ""}`}
+    >
       <AdminSidebar collapsed={sidebarCollapsed} />
 
       <div className="admin-content">
@@ -28,7 +28,7 @@ const AdminLayout = ({ children }) => {
         </footer>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminLayout
+export default AdminLayout;

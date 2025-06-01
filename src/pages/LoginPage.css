@@ -391,7 +391,7 @@
 .input-with-icon {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: right;
   transition: all var(--transition-normal);
   isolation: isolate;
 }
@@ -401,13 +401,12 @@
 }
 
 .input-icon {
-  left: 1rem;
+  left: 8rem;
   color: var(--gray-500);
   pointer-events: none;
   width: 18px;
   height: 18px;
   transition: color var(--transition-normal);
-  z-index: 10;
   top: 50%;
   transform: translateY(-50%);
 }
