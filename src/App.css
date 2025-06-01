@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent horizontal shake during scroll */
+html {
+  overflow-y: scroll; /* Always show vertical scrollbar */
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden; /* Prevent horizontal scroll */
+  width: 100%;
+}
+
+/* Alternative approach - reserve space for scrollbar */
+.scrollbar-gutter {
+  scrollbar-gutter: stable;
+}
+
 @layer base {
   body {
     @apply bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark;
@@ -10,7 +26,7 @@
 
 @layer components {
   .container {
-    @apply mx-auto px-4 sm:px-6 lg:px-8;
+    @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
   }
 
   .btn {
@@ -104,16 +120,6 @@
     0 4px 6px -2px rgba(0, 0, 0, 0.5);
 }
 
-body {
-  background-color: var(--light);
-  color: var(--dark);
-}
-
-.dark body {
-  background-color: var(--light);
-  color: var(--dark);
-}
-
 a {
   text-decoration: none;
   color: inherit;
@@ -129,29 +135,15 @@ button {
 img {
   max-width: 100%;
   height: auto;
+  width: 100%;
 }
 
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.container {
+  overflow-x: hidden; /* Prevent horizontal overflow */
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.75rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-  }
 }
 
 /* Animations */
@@ -183,18 +175,36 @@ img {
   animation: slideUp 0.5s ease-out;
 }
 
-/* Hover effects */
+/* Fixed Hover effects - No more shaking! */
+.custom-button {
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .custom-button:hover {
-  transform: translateY(-2px);
+  transform: translate3d(
+    0,
+    -2px,
+    0
+  ); /* Use 3D transform for better performance */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .campaign-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .campaign-card:hover {
-  transform: translateY(-5px);
+  transform: translate3d(
+    0,
+    -5px,
+    0
+  ); /* Use 3D transform for better performance */
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -219,16 +229,17 @@ img {
   .mobile-menu {
     position: fixed;
     top: 0;
-    right: -100%;
+    right: 0;
     width: 100%;
     height: 100vh;
     background-color: var(--light);
-    transition: right 0.3s ease;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
     z-index: 1000;
   }
 
   .mobile-menu.open {
-    right: 0;
+    transform: translateX(0);
   }
 
   .mobile-menu-items {
@@ -243,4 +254,24 @@ img {
     top: 1rem;
     right: 1rem;
   }
+}
+
+/* Webkit browsers scrollbar handling */
+@supports selector(::-webkit-scrollbar) {
+  html {
+    overflow-y: overlay; /* Use overlay scrollbar if supported */
+  }
+}
+
+/* For browsers that support scrollbar-gutter */
+@supports (scrollbar-gutter: stable) {
+  html {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+}
+
+main {
+  padding-top: 72px; /* Height of the navbar */
+  min-height: calc(100vh - 72px);
 }

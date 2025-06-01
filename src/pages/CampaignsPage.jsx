@@ -5,6 +5,8 @@ import CampaignCard from "../components/CampaignCard";
 import SearchBar from "../components/SearchBar";
 import { Filter } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { api } from "../utils/api"; // Import API utility
+import { API_ENDPOINTS } from "../config/api"; // Import API endpoints
 import "./CampaignsPage.css";
 
 const CampaignsPage = () => {
@@ -13,6 +15,8 @@ const CampaignsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const { darkMode } = useTheme();
 
   const categories = [
@@ -24,56 +28,29 @@ const CampaignsPage = () => {
   ];
 
   useEffect(() => {
-    // Mock data for campaigns
-    const mockCampaigns = [
-      {
-        id: 1,
-        title: "Help in Disaster in Juba",
-        description:
-          "Your donation is needed for victims of flooding in Juba. Help provide essential supplies.",
-        image: "/images/flood-disaster.png",
-        raised: 12500,
-        goal: 25000,
-        daysLeft: 15,
-        category: "Emergency",
-      },
-      {
-        id: 2,
-        title: "Displaced from Jambo",
-        description:
-          "Help people displaced by conflict in Jambo region with food, shelter and medical aid.",
-        image: "/images/displaced-people.png",
-        raised: 8750,
-        goal: 15000,
-        daysLeft: 21,
-        category: "Social Impact",
-      },
-      {
-        id: 3,
-        title: "Medical Treatment for Sarah",
-        description:
-          "Help fund Sarah's critical surgery and post-operative care. Your support can save a life.",
-        image: "/images/medical-treatment.png",
-        raised: 15000,
-        goal: 30000,
-        daysLeft: 10,
-        category: "Medical",
-      },
-      {
-        id: 4,
-        title: "School Building Project",
-        description:
-          "Help build a new school for children in rural areas who currently have no access to education.",
-        image: "/images/school-project.png",
-        raised: 20000,
-        goal: 50000,
-        daysLeft: 45,
-        category: "Education",
-      },
-    ];
+    const fetchCampaigns = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        console.log("Fetching campaigns from:", API_ENDPOINTS.CAMPAIGNS);
+        const response = await api.get(API_ENDPOINTS.CAMPAIGNS);
+        // Normalize category to lowercase for frontend consistency
+        const normalizedCampaigns = response.map((campaign) => ({
+          ...campaign,
+          category: campaign.category ? campaign.category.toLowerCase() : "",
+        }));
+        console.log("Fetched campaigns:", normalizedCampaigns);
+        setCampaigns(normalizedCampaigns);
+        setFilteredCampaigns(normalizedCampaigns);
+      } catch (err) {
+        console.error("Error fetching campaigns:", err);
+        setError("Failed to load campaigns. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setCampaigns(mockCampaigns);
-    setFilteredCampaigns(mockCampaigns);
+    fetchCampaigns();
   }, []);
 
   const handleSearch = (term) => {
@@ -93,15 +70,15 @@ const CampaignsPage = () => {
     if (term.trim()) {
       filtered = filtered.filter(
         (campaign) =>
-          campaign.title.toLowerCase().includes(term.toLowerCase()) ||
-          campaign.description.toLowerCase().includes(term.toLowerCase())
+          campaign.title?.toLowerCase().includes(term.toLowerCase()) ||
+          campaign.description?.toLowerCase().includes(term.toLowerCase())
       );
     }
 
     // Filter by category
     if (category !== "all") {
       filtered = filtered.filter(
-        (campaign) => campaign.category.toLowerCase() === category.toLowerCase()
+        (campaign) => campaign.category === category
       );
     }
 
@@ -145,7 +122,22 @@ const CampaignsPage = () => {
           </div>
         </div>
 
-        {filteredCampaigns.length === 0 ? (
+        {loading ? (
+          <div className="loading">
+            <h3>Loading campaigns...</h3>
+          </div>
+        ) : error ? (
+          <div className="error">
+            <h3>Error</h3>
+            <p>{error}</p>
+            <button
+              className="retry-button"
+              onClick={() => window.location.reload()}
+            >
+              Retry
+            </button>
+          </div>
+        ) : filteredCampaigns.length === 0 ? (
           <div className="no-campaigns">
             <h3>No campaigns found</h3>
             <p>Try adjusting your search or filter criteria</p>
@@ -161,11 +153,13 @@ const CampaignsPage = () => {
             </button>
           </div>
         ) : (
-          <div className="campaigns-grid">
+          <ol className="campaigns-grid">
             {filteredCampaigns.map((campaign) => (
-              <CampaignCard key={campaign.id} campaign={campaign} />
+              <li key={campaign.id}>
+                <CampaignCard campaign={campaign} />
+              </li>
             ))}
-          </div>
+          </ol>
         )}
       </div>
     </div>

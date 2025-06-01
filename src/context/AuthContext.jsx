@@ -1,167 +1,132 @@
+// src/context/AuthContext.jsx
 "use client";
 
-import { createContext, useState, useContext, useEffect } from "react";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  sendPasswordResetEmail,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged,
-} from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
-import { app } from "../firebase/config";
+import { createContext, useContext, useEffect, useState } from "react";
+import { api } from "../utils/api";
+import { API_ENDPOINTS } from "../config/api";
 
 const AuthContext = createContext();
 
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Get additional user data from Firestore
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        const userData = userDoc.data();
-
-        setCurrentUser({
-          uid: user.uid,
-          email: user.email,
-          name: user.displayName || userData?.name,
-          role: userData?.role || "user",
-          photoURL: user.photoURL,
-        });
-      } else {
-        setCurrentUser(null);
-      }
-      setLoading(false);
+  const setUserFromData = (userData) => {
+    setCurrentUser({
+      id: userData.id || null,
+      email: userData.email || "",
+      name: userData.first_name || userData.email || "",
+      first_name: userData.first_name || "",
+      last_name: userData.last_name || "",
+      is_staff: userData.is_staff || false,
     });
+  };
 
-    return unsubscribe;
-  }, [auth, db]);
+  // Load user profile on app start
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
+    api
+      .get(API_ENDPOINTS.PROFILE)
+      .then((userData) => setUserFromData(userData))
+      .catch((error) => {
+        console.error("Error loading profile:", error);
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        setCurrentUser(null);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const login = async (email, password) => {
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      return result.user;
+      if (!email || !password) {
+        throw new Error("Email and password are required");
+      }
+
+      const response = await api.post(API_ENDPOINTS.LOGIN, { email, password });
+
+      if (!response.tokens?.access) {
+        throw new Error("Invalid server response: Missing access token");
+      }
+
+      localStorage.setItem("token", response.tokens.access);
+      if (response.tokens.refresh) {
+        localStorage.setItem("refreshToken", response.tokens.refresh);
+      }
+
+      const userData = response.user || { email };
+      setUserFromData(userData);
+      return userData;
     } catch (error) {
-      throw new Error(error.message);
+      console.error("Login failed:", error.message);
+      throw error;
     }
   };
 
-  const signup = async (name, email, password) => {
+  const signup = async (formData) => {
     try {
-      const result = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const response = await api.post(API_ENDPOINTS.REGISTER, formData);
 
-      // Create user document in Firestore
-      await setDoc(doc(db, "users", result.user.uid), {
-        name,
-        email,
-        role: "user",
-        createdAt: new Date().toISOString(),
-      });
+      if (!response.tokens?.access) {
+        throw new Error("Invalid server response: Missing access token");
+      }
 
-      return result.user;
+      localStorage.setItem("token", response.tokens.access);
+      if (response.tokens.refresh) {
+        localStorage.setItem("refreshToken", response.tokens.refresh);
+      }
+
+      const userData = response.user || { email: formData.email };
+      setUserFromData(userData);
+      return userData;
     } catch (error) {
-      throw new Error(error.message);
+      console.error("Signup failed:", error.message);
+      throw new Error(error.message || "Failed to register user");
     }
   };
 
-  const logout = async () => {
+  const logout = () => {
     try {
-      await signOut(auth);
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      setCurrentUser(null);
     } catch (error) {
-      throw new Error(error.message);
+      console.error("Logout error:", error.message);
+      throw new Error(error.message || "Failed to logout");
     }
   };
 
   const resetPassword = async (email) => {
     try {
-      await sendPasswordResetEmail(auth, email);
+      await api.post(API_ENDPOINTS.PASSWORD_RESET, { email });
     } catch (error) {
-      throw new Error(error.message);
+      console.error("Password reset failed:", error.message);
+      throw new Error(error.message || "Failed to reset password");
     }
   };
 
-  const signInWithGoogle = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-
-      // Check if user exists in Firestore
-      const userDoc = await getDoc(doc(db, "users", result.user.uid));
-
-      if (!userDoc.exists()) {
-        // Create new user document
-        await setDoc(doc(db, "users", result.user.uid), {
-          name: result.user.displayName,
-          email: result.user.email,
-          role: "user",
-          photoURL: result.user.photoURL,
-          createdAt: new Date().toISOString(),
-        });
-      }
-
-      return result.user;
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  };
-
-  const signInWithFacebook = async () => {
-    try {
-      const provider = new FacebookAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-
-      // Check if user exists in Firestore
-      const userDoc = await getDoc(doc(db, "users", result.user.uid));
-
-      if (!userDoc.exists()) {
-        // Create new user document
-        await setDoc(doc(db, "users", result.user.uid), {
-          name: result.user.displayName,
-          email: result.user.email,
-          role: "user",
-          photoURL: result.user.photoURL,
-          createdAt: new Date().toISOString(),
-        });
-      }
-
-      return result.user;
-    } catch (error) {
-      throw new Error(error.message);
-    }
-  };
-
-  const isAdmin = () => {
-    return currentUser?.role === "admin";
-  };
+  const isAdmin = () => currentUser?.is_staff || false;
 
   const value = {
     currentUser,
+    loading,
     login,
     signup,
     logout,
     resetPassword,
-    signInWithGoogle,
-    signInWithFacebook,
     isAdmin,
-    loading,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };

@@ -1,0 +1,57 @@
+### Create campaign with the registered user
+
+POST http://localhost:8000/api/campaigns/create/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ4MzgxNjE0LCJpYXQiOjE3NDgzNzk4MTQsImp0aSI6ImUwMmQ3NjY1ZGFjMjQ2ZmFhYTliN2NhZjRjYTRlZmU0IiwidXNlcl9pZCI6Mn0.Dv9uQVq88JCcdQG4G6FIR7ree8cQfsBbNQrQf_5qLts
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary123
+
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="title"
+
+ Test 3
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="category"
+
+NATURAL_DISASTER
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="description"
+
+I'm KAL wagenw please help me!
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="goal_amount"
+
+7000
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="starting_date"
+
+2025-05-27
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="ending_date"
+
+2025-06-15
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="location"
+
+Addis
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="image"; filename="test.png"
+Content-Type: image/png
+
+< ./test.png
+------WebKitFormBoundary123
+Content-Disposition: form-data; name="document"; filename="test.pdf"
+Content-Type: application/pdf
+
+< ./test.pdf
+------WebKitFormBoundary123--
+
+
+
+
+
+
+
+### Get campaign detail
+
+# GET http://localhost:8000/api/campaigns/1/
+GET http://localhost:8000/api/admin/review/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQ3OTU0MTM4LCJpYXQiOjE3NDc5NTIzMzgsImp0aSI6IjcyMGI3MDRmYzk5MDQwYTU5NzMwNDg3YWFiMjM1ODk4IiwidXNlcl9pZCI6Mn0.VId0a7LGZaK8sd_yUGfgHjiqJdhXKVXTtkt6hHf7Ol8

@@ -1,4 +1,3 @@
-"use client";
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +6,6 @@ import { useTheme } from "../context/ThemeContext";
 import Logo from "../components/Logo";
 import Input from "../components/Input";
 import Button from "../components/Button";
-import SocialButton from "../components/SocialButton";
 import { AlertCircle, Loader2 } from "lucide-react";
 import "./SignupPage.css";
 
@@ -21,7 +19,7 @@ const SignupPage = () => {
   });
   const [errors, setErrors] = useState({});
   const [error, setError] = useState("");
-  const { signup, signInWithGoogle, signInWithFacebook, loading } = useAuth();
+  const { signup, loading } = useAuth();
   const { darkMode } = useTheme();
   const navigate = useNavigate();
 
@@ -79,29 +77,34 @@ const SignupPage = () => {
 
     if (validateForm()) {
       try {
-        await signup(
-          `${formData.firstName} ${formData.lastName}`,
-          formData.email,
-          formData.password
-        );
-        navigate("/");
+        const userData = {
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          confirm_password: formData.confirmPassword,
+        };
+        await signup(userData);
+        // Show success message and redirect to login
+        setError("Registration successful! Please login to continue.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       } catch (error) {
-        setError(error.message);
+        if (error.response?.data) {
+          const errorData = error.response.data;
+          if (typeof errorData === "object") {
+            const errorMessages = Object.entries(errorData)
+              .map(([key, value]) => `${key}: ${value.join(", ")}`)
+              .join("\n");
+            setError(errorMessages);
+          } else {
+            setError(errorData);
+          }
+        } else {
+          setError(error.message || "Failed to register user");
+        }
       }
-    }
-  };
-
-  const handleSocialSignup = async (provider) => {
-    setError("");
-    try {
-      if (provider === "Google") {
-        await signInWithGoogle();
-      } else if (provider === "Facebook") {
-        await signInWithFacebook();
-      }
-      navigate("/");
-    } catch (error) {
-      setError(error.message);
     }
   };
 
@@ -125,7 +128,11 @@ const SignupPage = () => {
         <div className="signup-right">
           <div className="signup-header">
             <Link to="/" className="logo-link">
-              <img src="/icons/logo.png" alt="Community Logo" className="logo" />
+              <img
+                src="/icons/logo.png"
+                alt="Community Logo"
+                className="logo"
+              />
             </Link>
             <div className="auth-switch">
               <span>Already have an account?</span>
@@ -147,25 +154,6 @@ const SignupPage = () => {
                 <span>{error}</span>
               </div>
             )}
-
-            <div className="social-signup">
-              <SocialButton
-                icon={<img src="/icons/google.svg" alt="Google" />}
-                provider="Google"
-                onClick={() => handleSocialSignup("Google")}
-                disabled={loading}
-              />
-              <SocialButton
-                icon={<img src="/icons/facebook.svg" alt="Facebook" />}
-                provider="Facebook"
-                onClick={() => handleSocialSignup("Facebook")}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="divider">
-              <span>Or sign up with email</span>
-            </div>
 
             <form onSubmit={handleSubmit} className="signup-form">
               <div className="name-fields">
@@ -215,7 +203,7 @@ const SignupPage = () => {
 
               <Input
                 type="password"
-                placeholder="Confirm your password"
+                placeholder="Confirm password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -231,24 +219,13 @@ const SignupPage = () => {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="animate-spin" size={20} />
-                    <span>Creating Account...</span>
+                    <Loader2 className="animate-spin" />
+                    Creating Account...
                   </>
                 ) : (
                   "Create Account"
                 )}
               </Button>
-
-              <p className="terms-agreement">
-                By signing up, you agree to our{" "}
-                <Link to="/terms" className="terms-link">
-                  Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link to="/privacy-policy" className="terms-link">
-                  Privacy Policy
-                </Link>
-              </p>
             </form>
           </div>
         </div>

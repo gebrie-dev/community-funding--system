@@ -25,7 +25,6 @@ const Navbar = () => {
   const userMenuRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
-  // Close menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -43,7 +42,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [location]);
@@ -71,6 +69,17 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
+  const getUserInitial = () => {
+    if (!currentUser) return "?";
+    const name = currentUser.first_name || currentUser.email || "";
+    return name.charAt(0).toUpperCase() || "?";
+  };
+
+  const getDisplayName = () => {
+    if (!currentUser) return "User";
+    return currentUser.first_name || currentUser.email || "User";
+  };
+
   return (
     <nav className="navbar" role="navigation" aria-label="Main navigation">
       <div className="navbar-container">
@@ -79,7 +88,6 @@ const Navbar = () => {
           <span>Community Funding</span>
         </Link>
 
-        {/* Desktop Menu */}
         <div className="navbar-menu" role="menubar">
           <Link
             to="/"
@@ -136,9 +144,7 @@ const Navbar = () => {
                 aria-expanded={userMenuOpen}
                 aria-haspopup="true"
               >
-                <div className="user-avatar">
-                  {currentUser.name.charAt(0).toUpperCase()}
-                </div>
+                <div className="user-avatar">{getUserInitial()}</div>
                 <ChevronDown
                   size={16}
                   className={`chevron ${userMenuOpen ? "rotate" : ""}`}
@@ -146,18 +152,14 @@ const Navbar = () => {
               </button>
 
               {userMenuOpen && (
-                <div
-                  className="user-dropdown"
-                  role="menu"
-                  aria-label="User menu"
-                >
+                <div className="user-dropdown" role="menu" aria-label="User menu">
                   <div className="user-info">
-                    <span className="user-name">{currentUser.name}</span>
-                    <span className="user-email">{currentUser.email}</span>
+                    <span className="user-name">{getDisplayName()}</span>
+                    <span className="user-email">
+                      {currentUser.email || "No email"}
+                    </span>
                   </div>
-
                   <div className="dropdown-divider"></div>
-
                   <Link
                     to="/dashboard"
                     className="dropdown-item"
@@ -167,7 +169,6 @@ const Navbar = () => {
                     <User size={16} aria-hidden="true" />
                     <span>Dashboard</span>
                   </Link>
-
                   <Link
                     to="/create-campaign"
                     className="dropdown-item"
@@ -177,7 +178,6 @@ const Navbar = () => {
                     <Settings size={16} aria-hidden="true" />
                     <span>Create Campaign</span>
                   </Link>
-
                   <button
                     onClick={handleLogout}
                     className="dropdown-item logout"
@@ -200,7 +200,6 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Mobile Menu Button */}
           <button
             className="mobile-menu-button"
             onClick={toggleMobileMenu}
@@ -213,7 +212,6 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <div
         id="mobile-menu"
         className={`mobile-menu ${mobileMenuOpen ? "open" : ""}`}

@@ -1,229 +1,242 @@
-import { useState, useEffect } from "react"
-import AdminLayout from "../../components/admin/AdminLayout"
-import AdminTable from "../../components/admin/AdminTable"
-import { Search, Filter, Eye, CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
-import "./AdminCampaigns.css"
+import { useState, useEffect } from "react";
+import AdminLayout from "../../components/admin/AdminLayout";
+import AdminTable from "../../components/admin/AdminTable";
+import { Search, Filter, Eye, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
+import { api } from "../../utils/api";
+import { API_ENDPOINTS } from "../../config/api";
+import "./AdminCampaigns.css";
 
 const AdminCampaigns = () => {
-  const [campaigns, setCampaigns] = useState([])
-  const [filteredCampaigns, setFilteredCampaigns] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [showFilters, setShowFilters] = useState(false)
+  const [campaigns, setCampaigns] = useState([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
+
+  const BASE_URL = "http://localhost:8000";
 
   useEffect(() => {
-    // Mock data fetch
     const fetchCampaigns = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 800))
-        
-        const mockCampaigns = [
-          { 
-            id: 1, 
-            title: "Help in Disaster in Juba", 
-            creator: "John Doe", 
-            category: "Emergency", 
-            raised: 12500, 
-            goal: 25000, 
-            status: "active",
-            createdAt: "2023-05-15",
-            endDate: "2023-07-15"
-          },
-          { 
-            id: 2, 
-            title: "Displaced from Jambo", 
-            creator: "Sarah Smith", 
-            category: "Emergency", 
-            raised: 8750, 
-            goal: 15000, 
-            status: "active",
-            createdAt: "2023-06-01",
-            endDate: "2023-08-01"
-          },
-          { 
-            id: 3, 
-            title: "Education for Children", 
-            creator: "Michael Brown", 
-            category: "Education", 
-            raised: 5200, 
-            goal: 10000, 
-            status: "pending",
-            createdAt: "2023-06-10",
-            endDate: "2023-09-10"
-          },
-          { 
-            id: 4, 
-            title: "Community Garden Project", 
-            creator: "Emma Wilson", 
-            category: "Community", 
-            raised: 3000, 
-            goal: 7500, 
-            status: "pending",
-            createdAt: "2023-06-12",
-            endDate: "2023-08-12"
-          },
-          { 
-            id: 5, 
-            title: "Suspicious Campaign", 
-            creator: "Anonymous", 
-            category: "Medical", 
-            raised: 500, 
-            goal: 50000, 
-            status: "flagged",
-            createdAt: "2023-06-14",
-            endDate: "2023-09-14"
-          },
-          { 
-            id: 6, 
-            title: "Clean Water Initiative", 
-            creator: "David Johnson", 
-            category: "Social Impact", 
-            raised: 15000, 
-            goal: 20000, 
-            status: "active",
-            createdAt: "2023-05-20",
-            endDate: "2023-07-20"
-          },
-          { 
-            id: 7, 
-            title: "Medical Support for Children", 
-            creator: "Lisa Chen", 
-            category: "Medical", 
-            raised: 7500, 
-            goal: 12000, 
-            status: "rejected",
-            createdAt: "2023-06-05",
-            endDate: "2023-08-05"
-          },
-        ]
-        
-        setCampaigns(mockCampaigns)
-        setFilteredCampaigns(mockCampaigns)
-        setLoading(false)
-      } catch (error) {
-        console.error("Error fetching campaigns:", error)
-        setLoading(false)
+        console.log("Fetching campaigns from:", API_ENDPOINTS.ALL_CAMPAIGN);
+        const response = await api.get(API_ENDPOINTS.ALL_CAMPAIGN);
+        console.log("Raw API response:", response);
+
+        const campaignsData = Array.isArray(response.data)
+          ? response.data
+          : Array.isArray(response)
+            ? response
+            : [];
+
+        if (campaignsData.length === 0) {
+          console.warn("No campaigns found in response");
+        }
+
+        const normalizedCampaigns = campaignsData.map((campaign) => {
+          const rawStatus = campaign.status ? campaign.status.toLowerCase() : "";
+          const normalizedStatus = rawStatus === "approved"
+            ? "active"
+            : ["pending", "rejected", "flagged"].includes(rawStatus)
+              ? rawStatus
+              : "unknown";
+
+          const documentUrl = campaign.document
+            ? campaign.document.startsWith("http")
+              ? campaign.document
+              : `${BASE_URL}${campaign.document}`
+            : null;
+
+          console.log(`Campaign ID ${campaign.id} document:`, documentUrl);
+
+          return {
+            id: campaign.id || 0,
+            title: campaign.title || "",
+            creator: `${campaign.created_by?.first_name || ""} ${campaign.created_by?.last_name || ""}`.trim(),
+            category: campaign.category ? campaign.category.toLowerCase() : "",
+            raised: parseFloat(campaign.total_usd) || parseFloat(campaign.total_birr) || 0,
+            goal: parseFloat(campaign.goal_amount) || 0,
+            status: normalizedStatus,
+            createdAt: campaign.created_at ? campaign.created_at.split("T")[0] : "N/A",
+            endDate: campaign.ending_date || "N/A",
+            description: campaign.description || "",
+            location: campaign.location || "",
+            percentage_funded: parseFloat(campaign.percentage_funded) || 0,
+            starting_date: campaign.starting_date || "N/A",
+            image: campaign.image || null,
+            document: documentUrl,
+          };
+        });
+
+        console.log("Fetched campaigns:", normalizedCampaigns);
+        setCampaigns(normalizedCampaigns);
+        setFilteredCampaigns(normalizedCampaigns);
+      } catch (err) {
+        console.error("Error fetching campaigns:", {
+          message: err.message,
+          status: err.response?.status,
+          data: err.response?.data,
+        });
+        setError("Failed to load campaigns. Please try again later.");
+      } finally {
+        setLoading(false);
       }
-    }
-    
-    fetchCampaigns()
-  }, [])
+    };
+
+    fetchCampaigns();
+  }, []);
 
   useEffect(() => {
-    // Filter campaigns based on search term and status filter
-    const filtered = campaigns.filter(campaign => {
-      const matchesSearch = campaign.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                           campaign.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           campaign.category.toLowerCase().includes(searchTerm.toLowerCase())
-      
-      const matchesStatus = statusFilter === "all" || campaign.status === statusFilter
-      
-      return matchesSearch && matchesStatus
-    })
-    
-    setFilteredCampaigns(filtered)
-  }, [searchTerm, statusFilter, campaigns])
+    const filtered = campaigns.filter((campaign) => {
+      const matchesSearch =
+        campaign.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        campaign.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        campaign.category.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = statusFilter === "all" || campaign.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+
+    setFilteredCampaigns(filtered);
+  }, [searchTerm, statusFilter, campaigns]);
 
   const handleSearch = (e) => {
-    setSearchTerm(e.target.value)
-  }
+    setSearchTerm(e.target.value);
+  };
 
   const handleStatusFilter = (status) => {
-    setStatusFilter(status)
-  }
+    setStatusFilter(status);
+  };
 
-  const handleApproveCampaign = (id) => {
-    setCampaigns(prevCampaigns => 
-      prevCampaigns.map(campaign => 
-        campaign.id === id ? { ...campaign, status: 'active' } : campaign
-      )
-    )
-  }
+  const handleApproveCampaign = async (id) => {
+    try {
+      const response = await api.post(`${API_ENDPOINTS.changestatus}${id}/`, {
+        status: "APPROVED",
+      });
+      console.log("Approve response:", response.data);
+      setCampaigns((prevCampaigns) =>
+        prevCampaigns.map((campaign) =>
+          campaign.id === id ? { ...campaign, status: "active" } : campaign
+        )
+      );
+    } catch (error) {
+      console.error("Error approving campaign:", {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+      });
+      setError("Failed to approve campaign. Please try again.");
+    }
+  };
 
-  const handleRejectCampaign = (id) => {
-    setCampaigns(prevCampaigns => 
-      prevCampaigns.map(campaign => 
-        campaign.id === id ? { ...campaign, status: 'rejected' } : campaign
-      )
-    )
-  }
+  const handleRejectCampaign = async (id) => {
+    try {
+      const response = await api.post(`${API_ENDPOINTS.changestatus}${id}/`, {
+        status: "REJECTED",
+      });
+      console.log("Reject response:", response.data);
+      setCampaigns((prevCampaigns) =>
+        prevCampaigns.map((campaign) =>
+          campaign.id === id ? { ...campaign, status: "rejected" } : campaign
+        )
+      );
+    } catch (error) {
+      console.error("Error rejecting campaign:", error);
+      setError("Failed to reject campaign. Please try again.");
+    }
+  };
 
-  const handleFlagCampaign = (id) => {
-    setCampaigns(prevCampaigns => 
-      prevCampaigns.map(campaign => 
-        campaign.id === id ? { ...campaign, status: 'flagged' } : campaign
-      )
-    )
-  }
+  const handleFlagCampaign = async (id) => {
+    try {
+      const response = await api.patch(`${API_ENDPOINTS.ALL_CAMPAIGN}${id}/`, {
+        status: "FLAGGED",
+      });
+      console.log("Flag response:", response.data);
+      setCampaigns((prevCampaigns) =>
+        prevCampaigns.map((campaign) =>
+          campaign.id === id ? { ...campaign, status: "flagged" } : campaign
+        )
+      );
+    } catch (error) {
+      console.error("Error flagging campaign:", error);
+      setError("Failed to flag campaign. Please try again.");
+    }
+  };
 
   const columns = [
     { header: "Title", accessor: "title" },
     { header: "Creator", accessor: "creator" },
     { header: "Category", accessor: "category" },
-    { 
-      header: "Raised", 
+    {
+      header: "Raised",
       accessor: "raised",
-      cell: (value, row) => `$${value.toLocaleString()} of $${row.goal.toLocaleString()}`
+      cell: (value, row) => `$${value.toLocaleString()} of $${row.goal.toLocaleString()}`,
     },
-    { 
-      header: "Progress", 
+    {
+      header: "Progress",
       accessor: "progress",
       cell: (_, row) => {
-        const progress = (row.raised / row.goal) * 100
+        const progress = row.goal > 0 ? (row.raised / row.goal) * 100 : 0;
         return (
           <div className="progress-bar-container">
             <div className="progress-bar" style={{ width: `${progress}%` }}></div>
             <span>{progress.toFixed(0)}%</span>
           </div>
-        )
-      }
+        );
+      },
     },
-    { 
-      header: "Status", 
+    {
+      header: "Status",
       accessor: "status",
       cell: (value) => {
-        let statusClass = ""
+        let statusClass = "";
         switch (value) {
           case "active":
-            statusClass = "status-active"
-            break
+            statusClass = "status-active";
+            break;
           case "pending":
-            statusClass = "status-pending"
-            break
+            statusClass = "status-pending";
+            break;
           case "rejected":
-            statusClass = "status-rejected"
-            break
+            statusClass = "status-rejected";
+            break;
           case "flagged":
-            statusClass = "status-flagged"
-            break
+            statusClass = "status-flagged";
+            break;
           default:
-            statusClass = ""
+            statusClass = "status-unknown";
         }
-        
-        return <span className={`status-badge ${statusClass}`}>{value}</span>
-      }
+        return value;
+      },
     },
-    { 
-      header: "Actions", 
+    {
+      header: "Actions",
       accessor: "actions",
       cell: (_, row) => (
         <div className="action-buttons">
-          <button className="action-button view" title="View Details">
+          <a
+            href={row.document || "#"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`action-button view ${!row.document ? "disabled" : ""}`}
+            title="View Document"
+            onClick={(e) => !row.document && e.preventDefault()}
+          >
             <Eye size={16} />
-          </button>
+          </a>
           {row.status === "pending" && (
             <>
-              <button 
-                className="action-button approve" 
+              <button
+                className="action-button approve"
                 title="Approve Campaign"
                 onClick={() => handleApproveCampaign(row.id)}
               >
                 <CheckCircle size={16} />
               </button>
-              <button 
-                className="action-button reject" 
+              <button
+                className="action-button reject"
                 title="Reject Campaign"
                 onClick={() => handleRejectCampaign(row.id)}
               >
@@ -232,8 +245,8 @@ const AdminCampaigns = () => {
             </>
           )}
           {row.status !== "flagged" && row.status !== "rejected" && (
-            <button 
-              className="action-button flag" 
+            <button
+              className="action-button flag"
               title="Flag Campaign"
               onClick={() => handleFlagCampaign(row.id)}
             >
@@ -241,9 +254,9 @@ const AdminCampaigns = () => {
             </button>
           )}
         </div>
-      )
-    }
-  ]
+      ),
+    },
+  ];
 
   return (
     <AdminLayout>
@@ -253,15 +266,15 @@ const AdminCampaigns = () => {
           <div className="campaigns-actions">
             <div className="search-container">
               <Search size={18} className="search-icon" />
-              <input 
-                type="text" 
-                placeholder="Search campaigns..." 
+              <input
+                type="text"
+                placeholder="Search campaigns..."
                 value={searchTerm}
                 onChange={handleSearch}
                 className="search-input"
               />
             </div>
-            <button 
+            <button
               className="filter-button"
               onClick={() => setShowFilters(!showFilters)}
             >
@@ -270,37 +283,39 @@ const AdminCampaigns = () => {
             </button>
           </div>
         </div>
-        
+
+        {error && <div className="error-message">{error}</div>}
+
         {showFilters && (
           <div className="filter-options">
             <div className="filter-group">
               <h3>Status</h3>
               <div className="filter-buttons">
-                <button 
+                <button
                   className={`filter-option ${statusFilter === "all" ? "active" : ""}`}
                   onClick={() => handleStatusFilter("all")}
                 >
                   All
                 </button>
-                <button 
+                <button
                   className={`filter-option ${statusFilter === "active" ? "active" : ""}`}
                   onClick={() => handleStatusFilter("active")}
                 >
                   Active
                 </button>
-                <button 
+                <button
                   className={`filter-option ${statusFilter === "pending" ? "active" : ""}`}
                   onClick={() => handleStatusFilter("pending")}
                 >
                   Pending
                 </button>
-                <button 
+                <button
                   className={`filter-option ${statusFilter === "flagged" ? "active" : ""}`}
                   onClick={() => handleStatusFilter("flagged")}
                 >
                   Flagged
                 </button>
-                <button 
+                <button
                   className={`filter-option ${statusFilter === "rejected" ? "active" : ""}`}
                   onClick={() => handleStatusFilter("rejected")}
                 >
@@ -310,16 +325,16 @@ const AdminCampaigns = () => {
             </div>
           </div>
         )}
-        
-        <AdminTable 
-          columns={columns} 
-          data={filteredCampaigns} 
+
+        <AdminTable
+          columns={columns}
+          data={filteredCampaigns}
           loading={loading}
           emptyMessage="No campaigns found"
         />
       </div>
     </AdminLayout>
-  )
-}
+  );
+};
 
-export default AdminCampaigns
+export default AdminCampaigns;

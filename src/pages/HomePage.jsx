@@ -1,225 +1,304 @@
-// src/pages/HomePage.jsx
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Button from "../components/Button";
-import CampaignCard from "../components/CampaignCard";
-import SearchBar from "../components/SearchBar";
-import CategorySection from "../components/CategorySection";
-import { Heart, Users, Clock, Shield, CreditCard } from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
-import ChatBot from "../components/ChatBot";
-import "./HomePage.css";
+"use client"
+
+import { useState, useEffect } from "react"
+import { Link } from "react-router-dom"
+import Navbar from "../components/Navbar"
+import Button from "../components/Button"
+import CampaignCard from "../components/CampaignCard"
+import CategorySection from "../components/CategorySection"
+import {
+  Heart,
+  Users,
+  Clock,
+  Shield,
+  CreditCard,
+  TrendingUp,
+  Award,
+  CheckCircle,
+  ArrowRight,
+  Play,
+  Star,
+} from "lucide-react"
+import { useTheme } from "../context/ThemeContext"
+import ChatBot from "../components/ChatBot"
+import { api } from "../utils/api"
+import { API_ENDPOINTS } from "../config/api"
+import "./HomePage.css"
 
 const HomePage = () => {
-  const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
-  const [filteredCampaigns, setFilteredCampaigns] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const { darkMode } = useTheme();
+  const [featuredCampaigns, setFeaturedCampaigns] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const { darkMode } = useTheme()
 
+  // Fetch campaigns from the API
   useEffect(() => {
-    // Mock data for featured campaigns
-    const mockCampaigns = [
-      {
-        id: 1,
-        title: "Help in Disaster in Juba",
-        description:
-          "Your donation is needed for victims of flooding in Juba. Help provide essential supplies.",
-        image: "/images/flood-disaster.png",
-        raised: 12500,
-        goal: 25000,
-        daysLeft: 15,
-        category: "Emergency",
-      },
-      {
-        id: 2,
-        title: "Displaced from Jambo",
-        description:
-          "Help people displaced by conflict in Jambo region with food, shelter and medical aid.",
-        image: "/images/displaced-people.png",
-        raised: 8750,
-        goal: 15000,
-        daysLeft: 21,
-        category: "Social Impact",
-      },
-      {
-        id: 3,
-        title: "Medical Treatment for Sarah",
-        description:
-          "Help fund Sarah's critical surgery and post-operative care. Your support can save a life.",
-        image: "/images/sarah.png",
-        raised: 15000,
-        goal: 30000,
-        daysLeft: 10,
-        category: "Medical",
-      },
-      {
-        id: 4,
-        title: "School Building Project",
-        description:
-          "Help build a new school for children in rural areas who currently have no access to education.",
-        image: "/images/school-project.png",
-        raised: 20000,
-        goal: 50000,
-        daysLeft: 45,
-        category: "Education",
-      },
-    ];
+    const fetchCampaigns = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        console.log("Fetching campaigns from:", API_ENDPOINTS.CAMPAIGNS)
+        const response = await api.get(API_ENDPOINTS.CAMPAIGNS)
+        // Normalize category to lowercase for frontend consistency
+        const normalizedCampaigns = response.map((campaign) => ({
+          ...campaign,
+          category: campaign.category ? campaign.category.toLowerCase() : "",
+        }))
+        console.log("Fetched campaigns:", normalizedCampaigns)
 
-    setFeaturedCampaigns(mockCampaigns);
-    setFilteredCampaigns(mockCampaigns);
-  }, []);
-
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-
-    if (!term.trim()) {
-      setFilteredCampaigns(featuredCampaigns);
-      return;
+        // Get only the first 3 campaigns for the featured section
+        setFeaturedCampaigns(normalizedCampaigns.slice(0, 3))
+      } catch (err) {
+        console.error("Error fetching campaigns:", err)
+        setError("Failed to load campaigns. Please try again later.")
+      } finally {
+        setLoading(false)
+      }
     }
 
-    const filtered = featuredCampaigns.filter(
-      (campaign) =>
-        campaign.title.toLowerCase().includes(term.toLowerCase()) ||
-        campaign.description.toLowerCase().includes(term.toLowerCase()) ||
-        (campaign.category &&
-          campaign.category.toLowerCase().includes(term.toLowerCase()))
-    );
+    fetchCampaigns()
+  }, [])
 
-    setFilteredCampaigns(filtered);
-  };
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount)
+  }
 
   return (
     <div className={`home-page ${darkMode ? "dark" : ""}`}>
       <Navbar />
 
+      {/* Hero Section */}
       <section className="hero-section">
+        <div className="hero-background">
+          <div className="hero-pattern"></div>
+        </div>
         <div className="hero-content">
           <div className="hero-text">
+            <div className="hero-badge">
+              <Award size={16} />
+              <span>Trusted by 45,000+ donors worldwide</span>
+            </div>
             <h1>Raise Funds for Causes That Matter!</h1>
             <p>
-              Join a growing community dedicated to supporting important causes.
-              Your change makes a difference today.
+              Join a growing community dedicated to supporting important causes. Your change makes a difference today.
             </p>
             <div className="hero-actions">
               <Link to="/create-campaign">
-                <Button className="cta-button">Launch Campaign</Button>
+                <Button className="cta-button">Start Your Campaign</Button>
               </Link>
               <Link to="/campaigns">
-                <Button className="secondary-button">Explore Campaigns</Button>
+                <Button className="secondary-button">Explore Causes</Button>
               </Link>
             </div>
           </div>
-          <div className="hero-image">
-            <img src="/images/community-funding.png" alt="Community Funding" />
+          <div className="hero-visual">
+            <div className="hero-image-container">
+              <img src="/images/community-funding.png" alt="Community Impact" className="hero-image" />
+              <div className="floating-card card-1">
+                <div className="card-icon">
+                  <Heart size={20} />
+                </div>
+                <div className="card-content">
+                  <span className="card-number">2.5M+</span>
+                  <span className="card-label">Lives Impacted</span>
+                </div>
+              </div>
+              <div className="floating-card card-3">
+                <div className="card-icon">
+                  <Users size={20} />
+                </div>
+                <div className="card-content">
+                  <span className="card-number">1.2K+</span>
+                  <span className="card-label">Active Campaigns</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Features Section */}
       <section className="features-section">
         <div className="features-container">
-          <div className="feature">
-            <div className="feature-icon">
-              <Heart size={32} />
-            </div>
-            <h3>Make an Impact</h3>
-            <p>
-              Your contribution directly helps those in need and creates lasting
-              change in communities.
-            </p>
+          <div className="section-header">
+            <h2>Why Choose Our Platform?</h2>
+            <p>Trusted by thousands of donors and campaign creators worldwide</p>
           </div>
-
-          <div className="feature">
-            <div className="feature-icon">
-              <Users size={32} />
+          <div className="features-grid">
+            <div className="feature-card">
+              <div className="feature-icon">
+                <Shield size={32} />
+              </div>
+              <h3>100% Secure</h3>
+              <p>
+                Bank-level security with 256-bit SSL encryption. Your donations are protected and reach their
+                destination safely.
+              </p>
+              <div className="feature-badge">
+                <CheckCircle size={14} />
+                <span>Verified Secure</span>
+              </div>
             </div>
-            <h3>Join a Community</h3>
-            <p>
-              Connect with like-minded individuals committed to making the world
-              a better place.
-            </p>
-          </div>
 
-          <div className="feature">
-            <div className="feature-icon">
-              <Clock size={32} />
+            <div className="feature-card">
+              <div className="feature-icon">
+                <Clock size={32} />
+              </div>
+              <h3>Instant Impact</h3>
+              <p>
+                Funds are transferred quickly to campaign creators, ensuring immediate help for those who need it most.
+              </p>
+              <div className="feature-badge">
+                <CheckCircle size={14} />
+                <span>Fast Processing</span>
+              </div>
             </div>
-            <h3>Quick & Secure</h3>
-            <p>
-              Our platform ensures your donations are processed securely and
-              reach their destination quickly.
-            </p>
+
+            <div className="feature-card">
+              <div className="feature-icon">
+                <Users size={32} />
+              </div>
+              <h3>Global Community</h3>
+              <p>
+                Join thousands of compassionate individuals making a difference in communities across Ethiopia and
+                beyond.
+              </p>
+              <div className="feature-badge">
+                <CheckCircle size={14} />
+                <span>45K+ Members</span>
+              </div>
+            </div>
+
+            <div className="feature-card">
+              <div className="feature-icon">
+                <TrendingUp size={32} />
+              </div>
+              <h3>Proven Results</h3>
+              <p>
+                98% of campaigns reach their goals with our platform's powerful tools and engaged community support.
+              </p>
+              <div className="feature-badge">
+                <CheckCircle size={14} />
+                <span>98% Success</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Categories Section */}
       <CategorySection />
 
-      <section className="testimonial-section">
-        <div className="testimonial-container">
-          <div className="testimonial-content">
-            <div className="testimonial-quote">
-              <h3>
-                Thanks to this platform, I funded my medical bills in just two
-                weeks!
-              </h3>
-              <div className="social-proof">
-                <div className="social-icon facebook"></div>
-                <div className="social-icon twitter"></div>
-                <div className="social-icon instagram"></div>
-              </div>
-            </div>
-            <div className="testimonial-image">
-              <img src="/images/testimonial.png" alt="Testimonial" />
-              <div className="testimonial-badge">
-                <span>Verified Fundraiser</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      {/* Featured Campaigns */}
       <section className="campaigns-section">
-        <div className="campaigns-header">
-          <h2>Explore Causes</h2>
-          <SearchBar onSearch={handleSearch} />
-        </div>
+        <div className="campaigns-container">
+          <div className="section-header">
+            <h2>Featured Campaigns</h2>
+            <p>Discover inspiring stories and support causes that matter</p>
+          </div>
 
-        {filteredCampaigns.length === 0 ? (
-          <div className="no-results">
-            <p>No campaigns found matching "{searchTerm}"</p>
-            <button onClick={() => handleSearch("")} className="reset-search">
-              View all campaigns
-            </button>
+          {loading ? (
+            <div className="loading-container">
+              <div className="loading-spinner"></div>
+              <p>Loading campaigns...</p>
+            </div>
+          ) : error ? (
+            <div className="error-container">
+              <div className="error-message">
+                <Shield size={24} />
+                <h3>Couldn't load campaigns</h3>
+                <p>{error}</p>
+              </div>
+              <Button className="retry-button" onClick={() => window.location.reload()}>
+                Try Again
+              </Button>
+            </div>
+          ) : featuredCampaigns.length === 0 ? (
+            <div className="no-campaigns">
+              <h3>No campaigns available</h3>
+              <p>Check back soon for new campaigns</p>
+            </div>
+          ) : (
+            <div className="campaigns-grid">
+              {featuredCampaigns.map((campaign) => (
+                <CampaignCard key={campaign.id} campaign={campaign} />
+              ))}
+            </div>
+          )}
+
+          <div className="campaigns-cta">
+            <Link to="/campaigns">
+              <Button className="view-all-button">
+                View All Campaigns
+                <ArrowRight size={18} />
+              </Button>
+            </Link>
           </div>
-        ) : (
-          <div className="campaigns-container">
-            {filteredCampaigns.map((campaign) => (
-              <CampaignCard key={campaign.id} campaign={campaign} />
-            ))}
-          </div>
-        )}
+        </div>
       </section>
 
-      <section className="faq-section">
-        <div className="faq-section-header">
-          <h2>Quick Answers</h2>
-          <p>Common questions about our platform</p>
+      {/* Success Story */}
+      <section className="success-story-section">
+        <div className="success-story-container">
+          <div className="success-story-content">
+            <div className="success-story-text">
+              <div className="story-badge">
+                <Star size={16} />
+                <span>Success Story</span>
+              </div>
+              <h3>Thanks to this platform, I funded my medical bills in just two weeks!</h3>
+              <div className="story-author">
+                <div className="author-info">
+                  <h4>Sarah Tadesse</h4>
+                  <p>Mother of 3, Addis Ababa</p>
+                </div>
+                <div className="story-stats">
+                  <div className="story-stat">
+                    <span className="stat-number">$15,000</span>
+                    <span className="stat-label">Raised in 10 days</span>
+                  </div>
+                  <div className="story-stat">
+                    <span className="stat-number">340</span>
+                    <span className="stat-label">Supporters</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="success-story-image">
+              <img src="/images/testimonial.png" alt="Success Story" />
+              <div className="story-overlay">
+                <div className="play-button">
+                  <Play size={24} />
+                </div>
+                <span>Watch Sarah's Story</span>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="faq-section">
         <div className="faq-container">
-          <div className="faq-row">
+          <div className="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Everything you need to know about our platform</p>
+          </div>
+          <div className="faq-grid">
             <div className="faq-item">
               <div className="faq-icon">
                 <CreditCard size={24} />
               </div>
               <div className="faq-content">
                 <h3>What payment methods do you accept?</h3>
-                <p>
-                  We accept all major credit cards, PayPal, and bank transfers.
-                  All transactions are secure and encrypted.
-                </p>
+                <p>We accept Chapa, PayPal, and all major credit cards. All transactions are secure and encrypted.</p>
                 <Link to="/faq" className="learn-more">
-                  Learn more about payments →
+                  Learn more about payments <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
@@ -229,29 +308,21 @@ const HomePage = () => {
               </div>
               <div className="faq-content">
                 <h3>How do you verify campaigns?</h3>
-                <p>
-                  All campaigns undergo a thorough verification process
-                  including identity checks and documentation review.
-                </p>
+                <p>All campaigns undergo thorough verification including identity checks and documentation review.</p>
                 <Link to="/faq" className="learn-more">
-                  Learn more about verification →
+                  Learn more about verification <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
-          </div>
-          <div className="faq-row">
             <div className="faq-item">
               <div className="faq-icon">
                 <Users size={24} />
               </div>
               <div className="faq-content">
                 <h3>How do I start a campaign?</h3>
-                <p>
-                  Create an account, click "Launch Campaign", and follow our
-                  simple step-by-step guide to get started.
-                </p>
+                <p>Create an account, click "Start Your Campaign", and follow our simple step-by-step guide.</p>
                 <Link to="/faq" className="learn-more">
-                  Learn more about campaigns →
+                  Learn more about campaigns <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
@@ -261,28 +332,47 @@ const HomePage = () => {
               </div>
               <div className="faq-content">
                 <h3>How long do campaigns run?</h3>
-                <p>
-                  Campaigns can run for up to 60 days, with options to extend or
-                  create new ones if needed.
-                </p>
+                <p>Campaigns can run for up to 60 days, with options to extend or create new ones if needed.</p>
                 <Link to="/faq" className="learn-more">
-                  Learn more about timing →
+                  Learn more about timing <ArrowRight size={14} />
                 </Link>
               </div>
             </div>
           </div>
+          <div className="faq-cta">
+            <p>Still have questions?</p>
+            <Link to="/faq" className="view-all-faq">
+              View All FAQs
+              <ArrowRight size={18} />
+            </Link>
+          </div>
         </div>
-        <div className="faq-cta">
-          <p>Need more information?</p>
-          <Link to="/faq" className="view-all-faq">
-            View All FAQs
-          </Link>
+      </section>
+
+      {/* CTA Section */}
+      <section className="cta-section">
+        <div className="cta-container">
+          <div className="cta-content">
+            <h2>Ready to Make a Difference?</h2>
+            <p>Join thousands of people who are already creating positive change in their communities.</p>
+            <div className="cta-actions">
+              <Link to="/create-campaign">
+                <Button className="cta-primary">
+                  Start Your Campaign
+                  <ArrowRight size={18} />
+                </Button>
+              </Link>
+              <Link to="/campaigns">
+                <Button className="cta-secondary">Explore Campaigns</Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
       <ChatBot />
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default HomePage

@@ -1,0 +1,64 @@
+### Register a new user
+POST http://localhost:8000/api/account/register/
+Content-Type: application/json
+
+{
+  "email": "kaleabzewdie972@gmail.com",
+  "first_name": "Kalata",
+  "last_name": "Zed",
+  "password": "kalata@21",
+  "bio": "Passionate about community fundraising",
+  "phone_number": "+251912345678"
+}
+
+### Login with the registered user
+POST http://localhost:8000/api/account/login/
+Content-Type: application/json
+
+{
+  "email": "kaleabzewdie972@gmail.com",
+  "password": "kalata@21"
+}
+
+### Request password reset
+POST http://localhost:8000/api/account/password-reset/
+Content-Type: application/json
+
+{
+  "email": "kaleabzewdie972@gmail.com"
+}
+
+### Confirm password reset (replace <uid> and <token> with values from email or server logs)
+POST http://localhost:8000/api/account/reset-password-confirm/<uid>/<token>/
+Content-Type: application/json
+
+{
+  "new_password": "NewKalata@21",
+  "confirm_password": "NewKalata@21"
+}
+
+### Get user profile (requires JWT token from login)
+GET http://localhost:8000/api/account/profile/
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+### Update user profile (requires JWT token from login)
+PATCH http://localhost:8000/api/account/profile/update/
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "bio": "Updated bio for community fundraising",
+  "phone_number": "+251987654321"
+}
+
+### Update user details (requires JWT token from login)
+PATCH http://localhost:8000/api/account/user/update/
+Authorization: Bearer <access_token>
+Content-Type: application/json
+
+{
+  "email": "kaleabzewdie972@gmail.com",
+  "first_name": "Kalata",
+  "last_name": "ZedUpdated"
+}

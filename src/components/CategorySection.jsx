@@ -6,9 +6,9 @@ import "./CategorySection.css";
 const categories = [
   {
     id: 1,
-    name: "Education",
+    name: "EDUCATION",
     description:
-      "Support educational initiatives and help students achieve their academic goals.",
+      "Support educational initiatives and help students achieve their EDUCATION goals.",
     image: "/images/categories/education-icon.png",
     path: "/campaigns/education",
   },
