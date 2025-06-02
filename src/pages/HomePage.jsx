@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Button from "../components/Button";
-import CampaignCard from "../components/CampaignCard";
-import CategorySection from "../components/CategorySection";
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import Navbar from '../components/Navbar';
+import Button from '../components/Button';
+import CampaignCard from '../components/CampaignCard';
+import CategorySection from '../components/CategorySection';
 import {
   Heart,
   Users,
@@ -16,17 +16,20 @@ import {
   ArrowRight,
   Play,
   Star,
-} from "lucide-react";
-import { useTheme } from "../context/ThemeContext";
-import ChatBot from "../components/ChatBot";
-import { api } from "../utils/api";
-import { API_ENDPOINTS } from "../config/api";
-import "./HomePage.css";
+} from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
+import ChatBot from '../components/ChatBot';
+import { api } from '../utils/api';
+import { API_ENDPOINTS } from '../config/api';
+import './HomePage.css';
 
 const HomePage = () => {
   const [featuredCampaigns, setFeaturedCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [videoData, setVideoData] = useState(null);
+  const [Vloading, VsetLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [Verror, setVError] = useState(null);
   const { darkMode } = useTheme();
 
   // Fetch campaigns from the API
@@ -35,20 +38,20 @@ const HomePage = () => {
       setLoading(true);
       setError(null);
       try {
-        console.log("Fetching campaigns from:", API_ENDPOINTS.CAMPAIGNS);
+        console.log('Fetching campaigns from:', API_ENDPOINTS.CAMPAIGNS);
         const response = await api.get(API_ENDPOINTS.CAMPAIGNS);
         // Normalize category to lowercase for frontend consistency
         const normalizedCampaigns = response.map((campaign) => ({
           ...campaign,
-          category: campaign.category ? campaign.category.toLowerCase() : "",
+          category: campaign.category ? campaign.category.toLowerCase() : '',
         }));
-        console.log("Fetched campaigns:", normalizedCampaigns);
+        console.log('Fetched campaigns:', normalizedCampaigns);
 
         // Get only the first 3 campaigns for the featured section
         setFeaturedCampaigns(normalizedCampaigns.slice(0, 3));
       } catch (err) {
-        console.error("Error fetching campaigns:", err);
-        setError("Failed to load campaigns. Please try again later.");
+        console.error('Error fetching campaigns:', err);
+        setError('Failed to load campaigns. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -56,18 +59,37 @@ const HomePage = () => {
 
     fetchCampaigns();
   }, []);
+  useEffect(() => {
+    const fetchLatestVideo = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:8000/videos/latest/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch video');
+        }
+        const data = await response.json();
+        console.log('Fetched video data:', data);
+        setVideoData(data);
+        console.log('Video data set:', data);
+      } catch (err) {
+        setVError(err.message);
+      } finally {
+        VsetLoading(false);
+      }
+    };
 
+    fetchLatestVideo();
+  }, []);
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
   };
 
   return (
-    <div className={`home-page ${darkMode ? "dark" : ""}`}>
+    <div className={`home-page ${darkMode ? 'dark' : ''}`}>
       <Navbar />
 
       {/* Hero Section */}
@@ -283,13 +305,37 @@ const HomePage = () => {
               </div>
             </div>
             <div className="success-story-image">
-              <img src="/images/testimonial.png" alt="Success Story" />
-              <div className="story-overlay">
-                <div className="play-button">
-                  <Play size={24} />
+              {!Vloading && videoData?.data ? (
+                <div
+                  className="video-container"
+                  style={{ width: '600px', height: '300px' }}
+                >
+                  <video
+                    poster={
+                      videoData.data.thumbnail_url || '/images/testimonial.png'
+                    }
+                    controls
+                    className="story-video"
+                  >
+                    <source src={videoData.data.video_file} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="play-indicator">
+                    <Play size={24} />
+                    <span>Watch Amazing Story</span>
+                  </div>
                 </div>
-                <span>Watch Sarah's Story</span>
-              </div>
+              ) : (
+                <>
+                  <img src="/images/testimonial.png" alt="Success Story" />
+                  <div className="story-overlay">
+                    <div className="play-button">
+                      <Play size={24} />
+                    </div>
+                    <span>Watch Story</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

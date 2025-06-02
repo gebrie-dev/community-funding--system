@@ -36,6 +36,8 @@ export const AuthProvider = ({ children }) => {
       .then((userData) => setUserFromData(userData))
       .catch((error) => {
         console.error("Error loading profile:", error);
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("user_email");
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
         setCurrentUser(null);
@@ -55,6 +57,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error("Invalid server response: Missing access token");
       }
 
+      localStorage.setItem("user_id", response.user.id);
+      localStorage.setItem("user_email", response.user.email);
       localStorage.setItem("token", response.tokens.access);
       if (response.tokens.refresh) {
         localStorage.setItem("refreshToken", response.tokens.refresh);
@@ -95,6 +99,8 @@ export const AuthProvider = ({ children }) => {
     try {
       localStorage.removeItem("token");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("user_email");
       setCurrentUser(null);
     } catch (error) {
       console.error("Logout error:", error.message);

@@ -1,51 +1,62 @@
-import { useState, useEffect } from "react";
-import AdminLayout from "../../components/admin/AdminLayout";
-import AdminTable from "../../components/admin/AdminTable";
-import { Search, Filter, Eye, CheckCircle, XCircle, AlertTriangle } from "lucide-react";
-import { api } from "../../utils/api";
-import { API_ENDPOINTS } from "../../config/api";
-import "./AdminCampaigns.css";
+import { useState, useEffect } from 'react';
+import AdminLayout from '../../components/admin/AdminLayout';
+import AdminTable from '../../components/admin/AdminTable';
+import {
+  Search,
+  Filter,
+  Eye,
+  CheckCircle,
+  XCircle,
+  AlertTriangle,
+} from 'lucide-react';
+import { api } from '../../utils/api';
+import { API_ENDPOINTS } from '../../config/api';
+import './AdminCampaigns.css';
 
 const AdminCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [filteredCampaigns, setFilteredCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
 
-  const BASE_URL = "http://localhost:8000";
+  const BASE_URL = 'http://localhost:8000';
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       setLoading(true);
       setError(null);
       try {
-        console.log("Fetching campaigns from:", API_ENDPOINTS.ALL_CAMPAIGN);
+        console.log('Fetching campaigns from:', API_ENDPOINTS.ALL_CAMPAIGN);
         const response = await api.get(API_ENDPOINTS.ALL_CAMPAIGN);
-        console.log("Raw API response:", response);
+        console.log('Raw API response:', response);
 
         const campaignsData = Array.isArray(response.data)
           ? response.data
           : Array.isArray(response)
-            ? response
-            : [];
+          ? response
+          : [];
 
         if (campaignsData.length === 0) {
-          console.warn("No campaigns found in response");
+          console.warn('No campaigns found in response');
         }
 
         const normalizedCampaigns = campaignsData.map((campaign) => {
-          const rawStatus = campaign.status ? campaign.status.toLowerCase() : "";
-          const normalizedStatus = rawStatus === "approved"
-            ? "active"
-            : ["pending", "rejected", "flagged"].includes(rawStatus)
+          const rawStatus = campaign.status
+            ? campaign.status.toLowerCase()
+            : '';
+          const normalizedStatus =
+            rawStatus === 'approved'
+              ? 'active'
+              : ['pending', 'rejected', 'flagged'].includes(rawStatus)
               ? rawStatus
-              : "unknown";
+              : 'unknown';
 
           const documentUrl = campaign.document
-            ? campaign.document.startsWith("http")
+            ? campaign.document.startsWith('http')
               ? campaign.document
               : `${BASE_URL}${campaign.document}`
             : null;
@@ -54,33 +65,40 @@ const AdminCampaigns = () => {
 
           return {
             id: campaign.id || 0,
-            title: campaign.title || "",
-            creator: `${campaign.created_by?.first_name || ""} ${campaign.created_by?.last_name || ""}`.trim(),
-            category: campaign.category ? campaign.category.toLowerCase() : "",
-            raised: parseFloat(campaign.total_usd) || parseFloat(campaign.total_birr) || 0,
+            title: campaign.title || '',
+            creator: `${campaign.created_by?.first_name || ''} ${
+              campaign.created_by?.last_name || ''
+            }`.trim(),
+            category: campaign.category ? campaign.category.toLowerCase() : '',
+            raised:
+              parseFloat(campaign.total_usd) ||
+              parseFloat(campaign.total_birr) ||
+              0,
             goal: parseFloat(campaign.goal_amount) || 0,
             status: normalizedStatus,
-            createdAt: campaign.created_at ? campaign.created_at.split("T")[0] : "N/A",
-            endDate: campaign.ending_date || "N/A",
-            description: campaign.description || "",
-            location: campaign.location || "",
+            createdAt: campaign.created_at
+              ? campaign.created_at.split('T')[0]
+              : 'N/A',
+            endDate: campaign.ending_date || 'N/A',
+            description: campaign.description || '',
+            location: campaign.location || '',
             percentage_funded: parseFloat(campaign.percentage_funded) || 0,
-            starting_date: campaign.starting_date || "N/A",
+            starting_date: campaign.starting_date || 'N/A',
             image: campaign.image || null,
             document: documentUrl,
           };
         });
 
-        console.log("Fetched campaigns:", normalizedCampaigns);
+        console.log('Fetched campaigns:', normalizedCampaigns);
         setCampaigns(normalizedCampaigns);
         setFilteredCampaigns(normalizedCampaigns);
       } catch (err) {
-        console.error("Error fetching campaigns:", {
+        console.error('Error fetching campaigns:', {
           message: err.message,
           status: err.response?.status,
           data: err.response?.data,
         });
-        setError("Failed to load campaigns. Please try again later.");
+        setError('Failed to load campaigns. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -95,7 +113,8 @@ const AdminCampaigns = () => {
         campaign.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         campaign.creator.toLowerCase().includes(searchTerm.toLowerCase()) ||
         campaign.category.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = statusFilter === "all" || campaign.status === statusFilter;
+      const matchesStatus =
+        statusFilter === 'all' || campaign.status === statusFilter;
       return matchesSearch && matchesStatus;
     });
 
@@ -113,120 +132,120 @@ const AdminCampaigns = () => {
   const handleApproveCampaign = async (id) => {
     try {
       const response = await api.post(`${API_ENDPOINTS.changestatus}${id}/`, {
-        status: "APPROVED",
+        status: 'APPROVED',
       });
-      console.log("Approve response:", response.data);
       setCampaigns((prevCampaigns) =>
         prevCampaigns.map((campaign) =>
-          campaign.id === id ? { ...campaign, status: "active" } : campaign
+          campaign.id === id ? { ...campaign, status: 'active' } : campaign
         )
       );
+      setSuccessMessage('Campaign approved successfully!');
+      setTimeout(() => setSuccessMessage(''), 2500); // Hide after 3 seconds
     } catch (error) {
-      console.error("Error approving campaign:", {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-      });
-      setError("Failed to approve campaign. Please try again.");
+      setError('Failed to approve campaign. Please try again.');
     }
   };
 
   const handleRejectCampaign = async (id) => {
     try {
       const response = await api.post(`${API_ENDPOINTS.changestatus}${id}/`, {
-        status: "REJECTED",
+        status: 'REJECTED',
       });
-      console.log("Reject response:", response.data);
       setCampaigns((prevCampaigns) =>
         prevCampaigns.map((campaign) =>
-          campaign.id === id ? { ...campaign, status: "rejected" } : campaign
+          campaign.id === id ? { ...campaign, status: 'rejected' } : campaign
         )
       );
+      setSuccessMessage('Campaign rejected successfully!');
+      setTimeout(() => setSuccessMessage(''), 2500); // Hide after 3 seconds
     } catch (error) {
-      console.error("Error rejecting campaign:", error);
-      setError("Failed to reject campaign. Please try again.");
+      setError('Failed to reject campaign. Please try again.');
     }
   };
 
   const handleFlagCampaign = async (id) => {
     try {
-      const response = await api.patch(`${API_ENDPOINTS.ALL_CAMPAIGN}${id}/`, {
-        status: "FLAGGED",
+      const response = await api.post(`${API_ENDPOINTS.changestatus}${id}/`, {
+        status: 'FLAGGED',
       });
-      console.log("Flag response:", response.data);
+      console.log('Flag response:', response.data);
       setCampaigns((prevCampaigns) =>
         prevCampaigns.map((campaign) =>
-          campaign.id === id ? { ...campaign, status: "flagged" } : campaign
+          campaign.id === id ? { ...campaign, status: 'flagged' } : campaign
         )
       );
     } catch (error) {
-      console.error("Error flagging campaign:", error);
-      setError("Failed to flag campaign. Please try again.");
+      console.error('Error flagging campaign:', error);
+      setError('Failed to flag campaign. Please try again.');
     }
   };
 
   const columns = [
-    { header: "Title", accessor: "title" },
-    { header: "Creator", accessor: "creator" },
-    { header: "Category", accessor: "category" },
+    { header: 'Title', accessor: 'title' },
+    { header: 'Creator', accessor: 'creator' },
+    { header: 'Category', accessor: 'category' },
     {
-      header: "Raised",
-      accessor: "raised",
-      cell: (value, row) => `$${value.toLocaleString()} of $${row.goal.toLocaleString()}`,
+      header: 'Raised',
+      accessor: 'raised',
+      cell: (value, row) =>
+        `$${value.toLocaleString()} of $${row.goal.toLocaleString()}`,
     },
     {
-      header: "Progress",
-      accessor: "progress",
+      header: 'Progress',
+      accessor: 'progress',
       cell: (_, row) => {
         const progress = row.goal > 0 ? (row.raised / row.goal) * 100 : 0;
         return (
           <div className="progress-bar-container">
-            <div className="progress-bar" style={{ width: `${progress}%` }}></div>
+            <div
+              className="progress-bar"
+              style={{ width: `${progress}%` }}
+            ></div>
             <span>{progress.toFixed(0)}%</span>
           </div>
         );
       },
     },
     {
-      header: "Status",
-      accessor: "status",
+      header: 'Status',
+      accessor: 'status',
       cell: (value) => {
-        let statusClass = "";
+        let statusClass = '';
         switch (value) {
-          case "active":
-            statusClass = "status-active";
+          case 'active':
+            statusClass = 'status-active';
             break;
-          case "pending":
-            statusClass = "status-pending";
+          case 'pending':
+            statusClass = 'status-pending';
             break;
-          case "rejected":
-            statusClass = "status-rejected";
+          case 'rejected':
+            statusClass = 'status-rejected';
             break;
-          case "flagged":
-            statusClass = "status-flagged";
+          case 'flagged':
+            statusClass = 'status-flagged';
             break;
           default:
-            statusClass = "status-unknown";
+            statusClass = 'status-unknown';
         }
         return value;
       },
     },
     {
-      header: "Actions",
-      accessor: "actions",
+      header: 'Actions',
+      accessor: 'actions',
       cell: (_, row) => (
         <div className="action-buttons">
           <a
-            href={row.document || "#"}
+            href={row.document || '#'}
             target="_blank"
             rel="noopener noreferrer"
-            className={`action-button view ${!row.document ? "disabled" : ""}`}
+            className={`action-button view ${!row.document ? 'disabled' : ''}`}
             title="View Document"
             onClick={(e) => !row.document && e.preventDefault()}
           >
             <Eye size={16} />
           </a>
-          {row.status === "pending" && (
+          {row.status === 'pending' && (
             <>
               <button
                 className="action-button approve"
@@ -244,7 +263,7 @@ const AdminCampaigns = () => {
               </button>
             </>
           )}
-          {row.status !== "flagged" && row.status !== "rejected" && (
+          {/* {row.status !== 'flagged' && row.status !== 'rejected' && (
             <button
               className="action-button flag"
               title="Flag Campaign"
@@ -252,7 +271,7 @@ const AdminCampaigns = () => {
             >
               <AlertTriangle size={16} />
             </button>
-          )}
+          )} */}
         </div>
       ),
     },
@@ -285,6 +304,9 @@ const AdminCampaigns = () => {
         </div>
 
         {error && <div className="error-message">{error}</div>}
+        {successMessage && (
+          <div className="success-message">{successMessage}</div>
+        )}
 
         {showFilters && (
           <div className="filter-options">
@@ -292,32 +314,42 @@ const AdminCampaigns = () => {
               <h3>Status</h3>
               <div className="filter-buttons">
                 <button
-                  className={`filter-option ${statusFilter === "all" ? "active" : ""}`}
-                  onClick={() => handleStatusFilter("all")}
+                  className={`filter-option ${
+                    statusFilter === 'all' ? 'active' : ''
+                  }`}
+                  onClick={() => handleStatusFilter('all')}
                 >
                   All
                 </button>
                 <button
-                  className={`filter-option ${statusFilter === "active" ? "active" : ""}`}
-                  onClick={() => handleStatusFilter("active")}
+                  className={`filter-option ${
+                    statusFilter === 'active' ? 'active' : ''
+                  }`}
+                  onClick={() => handleStatusFilter('active')}
                 >
                   Active
                 </button>
                 <button
-                  className={`filter-option ${statusFilter === "pending" ? "active" : ""}`}
-                  onClick={() => handleStatusFilter("pending")}
+                  className={`filter-option ${
+                    statusFilter === 'pending' ? 'active' : ''
+                  }`}
+                  onClick={() => handleStatusFilter('pending')}
                 >
                   Pending
                 </button>
                 <button
-                  className={`filter-option ${statusFilter === "flagged" ? "active" : ""}`}
-                  onClick={() => handleStatusFilter("flagged")}
+                  className={`filter-option ${
+                    statusFilter === 'flagged' ? 'active' : ''
+                  }`}
+                  onClick={() => handleStatusFilter('flagged')}
                 >
                   Flagged
                 </button>
                 <button
-                  className={`filter-option ${statusFilter === "rejected" ? "active" : ""}`}
-                  onClick={() => handleStatusFilter("rejected")}
+                  className={`filter-option ${
+                    statusFilter === 'rejected' ? 'active' : ''
+                  }`}
+                  onClick={() => handleStatusFilter('rejected')}
                 >
                   Rejected
                 </button>

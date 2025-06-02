@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import AdminLayout from "../../components/admin/AdminLayout";
 import AdminStats from "../../components/admin/AdminStats";
 import {
@@ -13,7 +15,19 @@ import {
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
+
   console.log("AdminDashboard component rendering");
+    const navigate = useNavigate();
+  
+  // Check authentication on component mount
+  useEffect(() => {
+    const token = localStorage.getItem("token"); 
+    
+    if (!token) {
+      console.log("No token found, redirecting to login");
+      navigate("/login"); // Adjust this to your login route
+    }
+  }, [navigate]);
 
   const [stats, setStats] = useState({
     totalDonations: 0,
