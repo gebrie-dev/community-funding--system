@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -15,6 +16,8 @@ from decimal import Decimal
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+User = get_user_model()
+
 
 def validate_amount(amount):
     """Validate that the amount is a positive number."""
@@ -259,6 +262,21 @@ class CampaignListAPI(APIView):
         campaigns = Campaign.objects.filter(status='APPROVED')
         serializer = CampaignListSerializer(campaigns, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class SelfCampaignListAPI(APIView):
+    permission_classes = []
+
+    def get(self, request, pk):
+        """List of all campaigns created by specific user."""
+        try:
+            user = User.objects.get(pk=pk)
+        except User.DoesNotExist:
+            return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        campaigns = Campaign.objects.filter(created_by=user)
+        serializer = CampaignListSerializer(campaigns, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class CampaignDetailAPI(APIView):
     permission_classes = []
@@ -290,8 +308,8 @@ class AdminCampaignReviewAPI(APIView):
             if new_status in ['APPROVED', 'REJECTED']:
                 campaign.status = new_status
                 campaign.save()
-                if campaign.category != 'MEDICAL':
-                    send_campaign_status_email.delay(campaign.id)
+                # if campaign.category != 'MEDICAL':
+                #     send_campaign_status_email.delay(campaign.id)
                 return Response({
                     "message": f"Campaign {new_status.lower()} successfully"
                 }, status=status.HTTP_200_OK)

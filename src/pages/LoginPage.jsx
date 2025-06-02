@@ -95,6 +95,9 @@ const LoginPage = () => {
       }
 
       // Enhanced navigation with smooth transition
+      localStorage.setItem("user_id", userData.id)
+      localStorage.setItem("user_email", userData.email)
+
       const targetRoute = userData.is_staff ? "/admin" : "/dashboard";
       navigate(targetRoute, {
         state: { isInternal: userData.is_staff },
@@ -136,7 +139,7 @@ const LoginPage = () => {
         <div className="login-left">
           <div className="login-header">
             <Link to="/" className="logo-link" aria-label="Go to homepage">
-              <img
+              {/* <img
                 src="http://localhost:8000/icons/logo.png"
                 alt="Company Logo"
                 className="logo"
@@ -145,7 +148,7 @@ const LoginPage = () => {
                   e.target.alt = "Logo placeholder";
                 }}
                 loading="lazy"
-              />
+              /> */}
             </Link>
             <div className="auth-switch">
               <span>Don't have an account?</span>
@@ -294,7 +297,7 @@ const LoginPage = () => {
 
         <div className="login-right">
           <div className="login-illustration">
-            <img
+            {/* <img
               src="http://localhost:8000/images/login-illustration.png"
               alt="Community illustration showing people connecting and collaborating"
               onError={(e) => {
@@ -302,7 +305,7 @@ const LoginPage = () => {
                 e.target.alt = "Illustration placeholder";
               }}
               loading="lazy"
-            />
+            /> */}
           </div>
           <div className="login-message">
             <h2>Join Our Community</h2>

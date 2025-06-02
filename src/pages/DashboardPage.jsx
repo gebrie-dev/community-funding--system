@@ -27,6 +27,7 @@ const DashboardPage = () => {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState('campaigns');
   const [userCampaigns, setUserCampaigns] = useState([]);
+  const [userCampaignExist, setUserCampaignExist] = useState(false);
   const [userDonations, setUserDonations] = useState([]);
   const [dashboardStats, setDashboardStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -99,7 +100,8 @@ const DashboardPage = () => {
     const fetchCampaigns = async () => {
       try {
         setLoading(true);
-        const res = await fetch('http://127.0.0.1:8000/api/Allcampaigns/');
+        localStorage.getItem("user_id")? setUserCampaignExist(true): setUserCampaignExist(false);
+        const res = await fetch(`http://127.0.0.1:8000/api/campaigns/${localStorage.getItem("user_id")? localStorage.getItem("user_id"): 0}/`);
         const data = await res.json();
         setUserCampaigns(data);
       } catch (error) {
@@ -350,9 +352,11 @@ const DashboardPage = () => {
                 </div>
               ) : (
                 <div className="campaigns-grid">
-                  {userCampaigns.map((campaign) => (
+                  {userCampaignExist && userCampaigns.map((campaign) => (
+                    
                     <div key={campaign.id} className="campaign-card">
-                      <div className="campaign-image">
+                      
+                      <div className="-image">
                         <img
                           src={`http://localhost:8000${campaign.image}`}
                           alt={campaign.title}

@@ -10,26 +10,34 @@
   background: #0f172a;
 }
 
+/* Update the campaign image styles */
 .campaign-image {
   position: relative;
   width: 100%;
-  height: 200px; /* or whatever height you want */
+  height: 200px;
   overflow: hidden;
+  background: transparent; /* Ensure no white background */
 }
 
 .campaign-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-skeleton {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: #eee;
+  object-fit: cover;
+  z-index: 1; /* Ensure image stays on top */
+}
+
+/* Remove or modify the image-skeleton if it's covering the image */
+.image-skeleton {
+  display: none; /* Remove if not needed */
+  /* Or modify to only show when loading */
+}
+
+/* Add this to ensure proper image display */
+.campaign-card .campaign-image img.loaded {
+  opacity: 1;
 }
 
 /* Loading State */
