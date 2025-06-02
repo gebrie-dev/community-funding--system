@@ -5,6 +5,8 @@ urlpatterns = [
     
     path('api/campaigns/create/', views.CampaignCreateAPI.as_view(), name='create_campaign'),
     path('api/campaigns/', views.CampaignListAPI.as_view(), name='campaign_list'),
+    path('api/campaigns/<int:pk>/', views.SelfCampaignListAPI.as_view(), name='campaign_list_me'),
+
     path('api/campaigns/<int:pk>/', views.CampaignDetailAPI.as_view(), name='campaign_detail'),
     path('api/campaigns/review/', views.AdminCampaignReviewAPI.as_view(), name='campaign_review'),
     path('api/campaigns/review/<int:campaign_id>/', views.AdminCampaignReviewAPI.as_view(), name='campaign_review_update'),
