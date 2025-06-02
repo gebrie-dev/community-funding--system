@@ -39,8 +39,8 @@ const CampaignsPage = () => {
           ...campaign,
           category: campaign.category ? campaign.category.toLowerCase() : "",
         }));
-        console.log("Fetched campaigns:", normalizedCampaigns);
-        setCampaigns(normalizedCampaigns);
+        console.log("Fetched campaigns:", response);
+        setCampaigns(response);
         setFilteredCampaigns(normalizedCampaigns);
       } catch (err) {
         console.error("Error fetching campaigns:", err);

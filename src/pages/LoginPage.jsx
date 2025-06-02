@@ -33,7 +33,7 @@ const LoginPage = () => {
   useEffect(() => {
     const { email, password } = formData;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValid = emailRegex.test(email) && password.length >= 6;
+    const isValid = emailRegex.test(email) && password.length >= 4;
     setIsFormValid(isValid);
   }, [formData]);
 
@@ -206,7 +206,7 @@ const LoginPage = () => {
                   Email Address
                 </label>
                 <div className={`input-with-icon ${focusedField === 'email' ? 'focused' : ''}`}>
-                  <FaEnvelope className="input-icon" aria-hidden="true" />
+                  {/* <FaEnvelope className="input-icon ml-2" aria-hidden="true" /> */}
                   <input
                     type="email"
                     id="email"
@@ -230,7 +230,7 @@ const LoginPage = () => {
                   Password
                 </label>
                 <div className={`input-with-icon ${focusedField === 'password' ? 'focused' : ''}`}>
-                  <FaLock className="input-icon" aria-hidden="true" />
+                  {/* <FaLock className="input-icon" aria-hidden="true" /> */}
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
@@ -243,7 +243,7 @@ const LoginPage = () => {
                     required
                     disabled={isLoading}
                     autoComplete="current-password"
-                    minLength="6"
+                    minLength="4"
                     aria-describedby="password-requirements"
                     className={error && error.toLowerCase().includes('password') ? 'error' : ''}
                   />
