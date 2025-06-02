@@ -213,6 +213,8 @@ class CampaignCreateAPI(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
+        print("POST-FILES: ", request.FILES)
+        print("POST-DATA: ", request.data)
         """Create a new campaign with validation for medical campaigns."""
         serializer = CampaignSerializer(data=request.data)
         if not serializer.is_valid():
@@ -246,7 +248,7 @@ class CampaignCreateAPI(APIView):
 
         logger.debug("Saving non-Medical campaign")
         serializer.save(created_by=request.user, status='PENDING')
-        send_campaign_status_email.delay(serializer.instance.id)
+        # send_campaign_status_email.delay(serializer.instance.id)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class CampaignListAPI(APIView):

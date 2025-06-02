@@ -42,16 +42,17 @@ const CampaignDetailsPage = () => {
           throw new Error("Failed to fetch campaign details")
         }
         const data = await response.json()
-        if (data.status !== "APPROVED") {
-          throw new Error("Campaign is not available")
-        }
+        // if (data.status !== "APPROVED") {
+        //   throw new Error("Campaign is not available")
+        // }
 
         // Calculate days left based on ending_date
         const endDate = new Date(data.ending_date)
         const today = new Date()
         const timeDiff = endDate - today
         const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24))
-
+        // console.log("response", data)
+        
         // Map API data to expected campaign structure
         setCampaign({
           id: data.id,
@@ -59,8 +60,8 @@ const CampaignDetailsPage = () => {
           description: data.description,
           longDescription: data.description,
           image: data.image,
-          raised: Math.floor(Math.random() * data.goal_amount * 0.7), // Simulated for demo
-          goal: Number.parseFloat(data.goal_amount),
+          raised: Math.floor(Math.random() * data.goal * 0.7), // Simulated for demo
+          goal: Number.parseFloat(data.goal),
           daysLeft: daysLeft > 0 ? daysLeft : 0,
           backers: Math.floor(Math.random() * 200) + 10, // Simulated for demo
           category: data.category || "General",
@@ -72,6 +73,7 @@ const CampaignDetailsPage = () => {
             verified: Math.random() > 0.5,
           },
         })
+        // console.log("campain", campaign)
       } catch (error) {
         console.error("Error fetching campaign:", error)
         setError(error.message || "An error occurred while fetching campaign details.")

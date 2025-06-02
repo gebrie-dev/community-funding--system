@@ -103,14 +103,17 @@ const CampaignCard = ({ campaign }) => {
           <div className="progress-info">
             <div className="progress-amounts">
               <span className="amount-raised">
-                {formatCurrency(campaign.raised)}
+                {formatCurrency(
+                                parseFloat(campaign.percentage_funded) *
+                                  parseFloat(campaign.goal_amount)
+                              )}
               </span>
               <span className="amount-goal">
                 {" "}
-                raised of {formatCurrency(campaign.goal)}
+                raised of {formatCurrency(campaign.goal_amount)}
               </span>
             </div>
-            <span className="progress-percentage">{progress.toFixed(0)}%</span>
+            <span className="progress-percentage">{campaign.percentage_funded}%</span>
           </div>
 
           {/* Additional Stats */}
