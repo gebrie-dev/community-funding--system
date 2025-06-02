@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Campaign
 from account.models import CustomUser
-import decimal
+from decimal import Decimal
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,7 +36,7 @@ class CampaignSerializer(serializers.ModelSerializer):
 
 class CampaignListSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
-    goal_amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=decimal.Decimal('0.01'), source='goal')
+    goal_amount = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0.01'), source='goal')
     total_usd = serializers.DecimalField(max_digits=10, decimal_places=2)
     total_birr = serializers.DecimalField(max_digits=10, decimal_places=2)
     balance_in_birr = serializers.SerializerMethodField()
