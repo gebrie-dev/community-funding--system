@@ -357,9 +357,7 @@ const DashboardPage = () => {
                           src={`http://localhost:8000${campaign.image}`}
                           alt={campaign.title}
                           className={`loaded`}
-                          onLoad={() => setImageLoaded(true)}
                         />
-                        {!imageLoaded && <div className="image-skeleton"></div>}
                       </div>
 
                       <div className="campaign-content">

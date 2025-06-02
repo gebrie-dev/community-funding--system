@@ -9,10 +9,11 @@
 .dark .dashboard-page {
   background: #0f172a;
 }
+
 .campaign-image {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 200px; /* or whatever height you want */
   overflow: hidden;
 }
 
@@ -20,7 +21,6 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .image-skeleton {
@@ -29,14 +29,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: #e0e0e0;
-  animation: pulse 1.5s infinite;
-  z-index: 1;
-}
-
-.campaign-image img.loaded {
-  z-index: 2;
-  position: relative;
+  background: #eee;
 }
 
 /* Loading State */
