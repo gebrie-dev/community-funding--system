@@ -21,7 +21,8 @@ def get_exchange_rate(from_currency, to_currency, api_key=None):
         logger.warning("No API key provided, using fallback rate")
         return 132.1 if to_currency == 'ETB' else 0.007571
 
-    url = f"https://v6.exchangerate-api.com/v6/{api_key}/pair/{from_currency}/{to_currency}"
+    # url = f"https://v6.exchangerate-api.com/v6/{api_key}/pair/{from_currency}/{to_currency}"
+    url = ""
     try:
         response = session.get(url, timeout=10)
         response.raise_for_status()
