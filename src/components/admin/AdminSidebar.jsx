@@ -23,6 +23,7 @@ const AdminSidebar = ({ collapsed, toggleCollapse }) => {
 
   return (
     <aside className={`admin-sidebar ${collapsed ? "collapsed" : ""}`}>
+      <Link to="/dashboard">
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <Logo />
@@ -32,6 +33,7 @@ const AdminSidebar = ({ collapsed, toggleCollapse }) => {
           {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
       </div>
+      </Link>
 
       <nav className="sidebar-nav">
         <ul>

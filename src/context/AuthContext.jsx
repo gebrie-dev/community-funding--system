@@ -60,6 +60,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("user_id", response.user.id);
       localStorage.setItem("user_email", response.user.email);
       localStorage.setItem("token", response.tokens.access);
+      localStorage.setItem("is_staff", response.user.is_staff)
       if (response.tokens.refresh) {
         localStorage.setItem("refreshToken", response.tokens.refresh);
       }
@@ -82,6 +83,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       localStorage.setItem("token", response.tokens.access);
+
       if (response.tokens.refresh) {
         localStorage.setItem("refreshToken", response.tokens.refresh);
       }
@@ -101,6 +103,7 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user_id");
       localStorage.removeItem("user_email");
+      localStorage.removeItem("is_staff");
       setCurrentUser(null);
     } catch (error) {
       console.error("Logout error:", error.message);

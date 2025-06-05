@@ -21,9 +21,9 @@ const AdminDashboard = () => {
   
   // Check authentication on component mount
   useEffect(() => {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("is_staff"); 
     
-    if (!token) {
+    if (token == "false") {
       console.log("No token found, redirecting to login");
       navigate("/login"); // Adjust this to your login route
     }

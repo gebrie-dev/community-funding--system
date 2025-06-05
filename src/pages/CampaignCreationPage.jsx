@@ -1,11 +1,10 @@
-
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import { useAuth } from "../context/AuthContext"
-import Logo from "../components/Logo"
-import Input from "../components/Input"
-import Button from "../components/Button"
-import ChatbotRecommendation from "../components/ChatbotRecommendation"
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
+import Input from '../components/Input';
+import Button from '../components/Button';
+import ChatbotRecommendation from '../components/ChatbotRecommendation';
 import {
   Upload,
   MapPin,
@@ -23,258 +22,277 @@ import {
   HelpCircle,
   Clock,
   User,
-} from "lucide-react"
-import { api } from "../utils/api"
-import { API_ENDPOINTS } from "../config/api"
-import "./CampaignCreationPage.css"
+} from 'lucide-react';
+import { api } from '../utils/api';
+import { API_ENDPOINTS } from '../config/api';
+import './CampaignCreationPage.css';
 
 const CampaignCreationPage = () => {
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    goal: "",
-    starting_date: "",
-    ending_date: "",
-    category: "",
-    location: "",
+    title: '',
+    description: '',
+    goal: '',
+    starting_date: '',
+    ending_date: '',
+    category: '',
+    location: '',
     image: null,
     document: null,
-  })
-  const [previewImage, setPreviewImage] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
-  const [activeStep, setActiveStep] = useState(1)
-  const [formErrors, setFormErrors] = useState({})
-  const navigate = useNavigate()
-  const { currentUser } = useAuth()
+  });
+  const [previewImage, setPreviewImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [activeStep, setActiveStep] = useState(1);
+  const [formErrors, setFormErrors] = useState({});
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
   // Set default dates on component mount
   useEffect(() => {
-    const today = new Date()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const endDate = new Date(today)
-    endDate.setDate(today.getDate() + 30)
+    const endDate = new Date(today);
+    endDate.setDate(today.getDate() + 30);
 
     setFormData((prev) => ({
       ...prev,
       starting_date: formatDate(tomorrow),
       ending_date: formatDate(endDate),
-    }))
-  }, [])
+    }));
+  }, []);
 
   const formatDate = (date) => {
-    return date.toISOString().split("T")[0]
-  }
+    return date.toISOString().split('T')[0];
+  };
 
   const categories = [
-    { display: "Medical", backend: "MEDICAL" },
-    { display: "Education", backend: "EDUCATION" },
-    { display: "Emergency", backend: "EMERGENCY" },
-    { display: "Social Impact", backend: "SOCIAL_IMPACT" },
-  ]
+    { display: 'Medical', backend: 'MEDICAL' },
+    { display: 'Education', backend: 'EDUCATION' },
+    { display: 'Emergency', backend: 'EMERGENCY' },
+    { display: 'Social Impact', backend: 'SOCIAL_IMPACT' },
+  ];
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
 
     // Clear error for this field if it exists
     if (formErrors[name]) {
       setFormErrors((prev) => ({
         ...prev,
-        [name]: "",
-      }))
+        [name]: '',
+      }));
     }
-  }
+  };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
         setFormErrors((prev) => ({
           ...prev,
-          image: "Image must be less than 5MB",
-        }))
-        return
+          image: 'Image must be less than 5MB',
+        }));
+        return;
       }
 
       setFormData((prev) => ({
         ...prev,
         image: file,
-      }))
+      }));
 
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setPreviewImage(reader.result)
-      }
-      reader.readAsDataURL(file)
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
 
       // Clear error if it exists
       if (formErrors.image) {
         setFormErrors((prev) => ({
           ...prev,
-          image: "",
-        }))
+          image: '',
+        }));
       }
     }
-  }
+  };
 
   const handleDocumentChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files[0];
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
         setFormErrors((prev) => ({
           ...prev,
-          document: "Document must be less than 10MB",
-        }))
-        return
+          document: 'Document must be less than 10MB',
+        }));
+        return;
       }
 
       setFormData((prev) => ({
         ...prev,
         document: file,
-      }))
+      }));
 
       // Clear error if it exists
       if (formErrors.document) {
         setFormErrors((prev) => ({
           ...prev,
-          document: "",
-        }))
+          document: '',
+        }));
       }
     }
-  }
+  };
 
   const validateForm = () => {
-    const errors = {}
+    const errors = {};
 
     if (!formData.title.trim()) {
-      errors.title = "Title is required"
+      errors.title = 'Title is required';
     } else if (formData.title.length < 5) {
-      errors.title = "Title must be at least 5 characters"
+      errors.title = 'Title must be at least 5 characters';
     }
 
     if (!formData.description.trim()) {
-      errors.description = "Description is required"
+      errors.description = 'Description is required';
     } else if (formData.description.length < 20) {
-      errors.description = "Description must be at least 20 characters"
+      errors.description = 'Description must be at least 20 characters';
     }
 
     if (!formData.goal) {
-      errors.goal = "Funding goal is required"
+      errors.goal = 'Funding goal is required';
     } else if (Number.parseFloat(formData.goal) <= 0) {
-      errors.goal = "Funding goal must be greater than 0"
+      errors.goal = 'Funding goal must be greater than 0';
     }
 
     if (!formData.starting_date) {
-      errors.starting_date = "Start date is required"
+      errors.starting_date = 'Start date is required';
     }
 
     if (!formData.ending_date) {
-      errors.ending_date = "End date is required"
+      errors.ending_date = 'End date is required';
     } else {
-      const start = new Date(formData.starting_date)
-      const end = new Date(formData.ending_date)
+      const start = new Date(formData.starting_date);
+      const end = new Date(formData.ending_date);
       if (end <= start) {
-        errors.ending_date = "End date must be after start date"
+        errors.ending_date = 'End date must be after start date';
       }
     }
 
     if (!formData.category) {
-      errors.category = "Category is required"
+      errors.category = 'Category is required';
     }
 
     if (!formData.location.trim()) {
-      errors.location = "Location is required"
+      errors.location = 'Location is required';
     }
 
     if (!formData.image) {
-      errors.image = "Campaign image is required"
+      errors.image = 'Campaign image is required';
     }
 
-    if (formData.category === "Medical" && !formData.document) {
-      errors.document = "Supporting document is required for Medical campaigns"
+    if (formData.category === 'Medical' && !formData.document) {
+      errors.document = 'Supporting document is required for Medical campaigns';
     }
 
-    setFormErrors(errors)
-    return Object.keys(errors).length === 0
-  }
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError("")
-    setSuccess("")
+    e.preventDefault();
+    setError('');
+    setSuccess('');
 
     if (!currentUser) {
-      setError("You must be logged in to create a campaign")
+      setError('You must be logged in to create a campaign');
       setTimeout(() => {
-        navigate("/login")
-      }, 2000)
-      return
+        navigate('/login');
+      }, 2000);
+      return;
     }
 
     if (!validateForm()) {
-      setError("Please fix the errors in the form")
-      window.scrollTo({ top: 0, behavior: "smooth" })
-      return
+      setError('Please fix the errors in the form');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const formDataToSend = new FormData()
-      formDataToSend.append("title", formData.title)
-      formDataToSend.append("description", formData.description)
-      formDataToSend.append("goal", Number.parseFloat(formData.goal).toFixed(2))
-      formDataToSend.append("starting_date", formData.starting_date)
-      formDataToSend.append("ending_date", formData.ending_date)
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('description', formData.description);
+      formDataToSend.append(
+        'goal',
+        Number.parseFloat(formData.goal).toFixed(2)
+      );
+      formDataToSend.append('starting_date', formData.starting_date);
+      formDataToSend.append('ending_date', formData.ending_date);
 
-      const categoryObj = categories.find((cat) => cat.display === formData.category)
-      formDataToSend.append("category", categoryObj ? categoryObj.backend : formData.category.toUpperCase())
+      const categoryObj = categories.find(
+        (cat) => cat.display === formData.category
+      );
+      formDataToSend.append(
+        'category',
+        categoryObj ? categoryObj.backend : formData.category.toUpperCase()
+      );
 
-      formDataToSend.append("location", formData.location)
-      if (formData.image) formDataToSend.append("image", formData.image)
-      if (formData.document) formDataToSend.append("document", formData.document)
+      formDataToSend.append('location', formData.location);
+      if (formData.image) formDataToSend.append('image', formData.image);
+      if (formData.document)
+        formDataToSend.append('document', formData.document);
 
-      const response = await api.post(API_ENDPOINTS.CAMPAIGN_CREATE, formDataToSend)
+      const response = await api.post(
+        API_ENDPOINTS.CAMPAIGN_CREATE,
+        formDataToSend
+      );
 
-      setSuccess("Campaign created successfully!")
+      setSuccess('Campaign created successfully!');
+      navigate('/dashboard');
       setTimeout(() => {
-        navigate(`/campaigns/${response.data.id}`)
-      }, 1500)
+        navigate('/dashboard');
+      }, 1500);
     } catch (error) {
-      console.error("Failed to create campaign:", error)
+      console.error('Failed to create campaign:', error);
 
-      let errorMessage = "Failed to create campaign. Please try again."
+      let errorMessage = 'Failed to create campaign. Please try again.';
       if (error.message) {
-        errorMessage = error.message
+        errorMessage = error.message;
       } else if (error.response?.data) {
-        if (error.response.data.error) errorMessage = error.response.data.error
-        else if (error.response.data.detail) errorMessage = error.response.data.detail
+        if (error.response.data.error) errorMessage = error.response.data.error;
+        else if (error.response.data.detail)
+          errorMessage = error.response.data.detail;
         else if (error.response.data.validation_reason) {
-          errorMessage = `Document rejected: ${error.response.data.validation_reason}`
-        } else if (typeof error.response.data === "object") {
+          errorMessage = `Document rejected: ${error.response.data.validation_reason}`;
+        } else if (typeof error.response.data === 'object') {
           errorMessage = Object.entries(error.response.data)
-            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(", ") : errors}`)
-            .join("; ")
+            .map(
+              ([field, errors]) =>
+                `${field}: ${
+                  Array.isArray(errors) ? errors.join(', ') : errors
+                }`
+            )
+            .join('; ');
         }
       }
-      setError(errorMessage)
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      setError(errorMessage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSuggestionApply = (suggestion) => {
-    console.log("Applying suggestion:", suggestion)
+    console.log('Applying suggestion:', suggestion);
     // Implement suggestion application logic
-  }
+  };
 
   return (
     <div className="campaign-creation-page">
@@ -282,7 +300,11 @@ const CampaignCreationPage = () => {
       <header className="campaign-header">
         <div className="header-container">
           <div className="header-left">
-            <button className="back-button" onClick={() => navigate(-1)} aria-label="Go back">
+            <button
+              className="back-button"
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+            >
               <ArrowLeft size={18} />
             </button>
             <div className="logo-container">
@@ -295,7 +317,7 @@ const CampaignCreationPage = () => {
               <div className="user-avatar">
                 <User size={16} />
               </div>
-              <span>Welcome, {currentUser?.first_name || "User"}</span>
+              <span>Welcome, {currentUser?.first_name || 'User'}</span>
             </div>
           </div>
         </div>
@@ -308,7 +330,6 @@ const CampaignCreationPage = () => {
           <p>Fill in the details below to start raising funds for your cause</p>
         </div>
 
-       
         {/* Messages */}
         {error && (
           <div className="message error">
@@ -347,14 +368,18 @@ const CampaignCreationPage = () => {
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className={formErrors.title ? "error" : ""}
+                    className={formErrors.title ? 'error' : ''}
                     disabled={loading}
                   />
                 </div>
-                {formErrors.title && <div className="error-text">{formErrors.title}</div>}
+                {formErrors.title && (
+                  <div className="error-text">{formErrors.title}</div>
+                )}
                 <div className="input-help">
                   <Info size={14} />
-                  <span>Keep it concise and descriptive (5-10 words recommended)</span>
+                  <span>
+                    Keep it concise and descriptive (5-10 words recommended)
+                  </span>
                 </div>
               </div>
 
@@ -369,7 +394,9 @@ const CampaignCreationPage = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className={`custom-select ${formErrors.category ? "error" : ""}`}
+                    className={`custom-select ${
+                      formErrors.category ? 'error' : ''
+                    }`}
                     disabled={loading}
                   >
                     <option value="" disabled>
@@ -382,7 +409,9 @@ const CampaignCreationPage = () => {
                     ))}
                   </select>
                 </div>
-                {formErrors.category && <div className="error-text">{formErrors.category}</div>}
+                {formErrors.category && (
+                  <div className="error-text">{formErrors.category}</div>
+                )}
               </div>
 
               <div className="form-group">
@@ -396,13 +425,20 @@ const CampaignCreationPage = () => {
                   value={formData.description}
                   onChange={handleChange}
                   rows={6}
-                  className={`custom-textarea ${formErrors.description ? "error" : ""} `}
+                  className={`custom-textarea ${
+                    formErrors.description ? 'error' : ''
+                  } `}
                   disabled={loading}
                 />
-                {formErrors.description && <div className="error-text">{formErrors.description}</div>}
+                {formErrors.description && (
+                  <div className="error-text">{formErrors.description}</div>
+                )}
                 <div className="input-help">
                   <Info size={14} />
-                  <span>Be specific and authentic. A compelling story increases your chances of success.</span>
+                  <span>
+                    Be specific and authentic. A compelling story increases your
+                    chances of success.
+                  </span>
                 </div>
               </div>
 
@@ -424,11 +460,13 @@ const CampaignCreationPage = () => {
                       name="starting_date"
                       value={formData.starting_date}
                       onChange={handleChange}
-                      className={formErrors.starting_date ? "error" : ""}
+                      className={formErrors.starting_date ? 'error' : ''}
                       disabled={loading}
                     />
                   </div>
-                  {formErrors.starting_date && <div className="error-text">{formErrors.starting_date}</div>}
+                  {formErrors.starting_date && (
+                    <div className="error-text">{formErrors.starting_date}</div>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -443,11 +481,13 @@ const CampaignCreationPage = () => {
                       name="ending_date"
                       value={formData.ending_date}
                       onChange={handleChange}
-                      className={formErrors.ending_date ? "error" : ""}
+                      className={formErrors.ending_date ? 'error' : ''}
                       disabled={loading}
                     />
                   </div>
-                  {formErrors.ending_date && <div className="error-text">{formErrors.ending_date}</div>}
+                  {formErrors.ending_date && (
+                    <div className="error-text">{formErrors.ending_date}</div>
+                  )}
                 </div>
               </div>
 
@@ -467,11 +507,13 @@ const CampaignCreationPage = () => {
                       onChange={handleChange}
                       min="1"
                       step="0.01"
-                      className={formErrors.goal ? "error" : ""}
+                      className={formErrors.goal ? 'error' : ''}
                       disabled={loading}
                     />
                   </div>
-                  {formErrors.goal && <div className="error-text">{formErrors.goal}</div>}
+                  {formErrors.goal && (
+                    <div className="error-text">{formErrors.goal}</div>
+                  )}
                   <div className="input-help">
                     <Info size={14} />
                     <span>Set a realistic goal based on your needs</span>
@@ -491,11 +533,13 @@ const CampaignCreationPage = () => {
                       name="location"
                       value={formData.location}
                       onChange={handleChange}
-                      className={formErrors.location ? "error" : ""}
+                      className={formErrors.location ? 'error' : ''}
                       disabled={loading}
                     />
                   </div>
-                  {formErrors.location && <div className="error-text">{formErrors.location}</div>}
+                  {formErrors.location && (
+                    <div className="error-text">{formErrors.location}</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -511,13 +555,23 @@ const CampaignCreationPage = () => {
                 <label>
                   Campaign Image <span className="required">*</span>
                 </label>
-                <div className={`file-upload-container ${formErrors.image ? "error-border" : ""}`}>
+                <div
+                  className={`file-upload-container ${
+                    formErrors.image ? 'error-border' : ''
+                  }`}
+                >
                   <div className="image-preview-container">
                     {previewImage ? (
                       <div className="image-preview">
-                        <img src={previewImage || "/placeholder.svg"} alt="Campaign preview" />
+                        <img
+                          src={previewImage || '/placeholder.svg'}
+                          alt="Campaign preview"
+                        />
                         <div className="image-overlay">
-                          <label htmlFor="image-upload" className="change-image-btn">
+                          <label
+                            htmlFor="image-upload"
+                            className="change-image-btn"
+                          >
                             Change Image
                           </label>
                         </div>
@@ -527,7 +581,10 @@ const CampaignCreationPage = () => {
                         <ImageIcon size={40} />
                         <p>Upload a compelling image</p>
                         <span>Recommended size: 1200x630px (Max: 5MB)</span>
-                        <label htmlFor="image-upload" className="upload-image-btn">
+                        <label
+                          htmlFor="image-upload"
+                          className="upload-image-btn"
+                        >
                           <Upload size={16} />
                           Select Image
                         </label>
@@ -543,42 +600,60 @@ const CampaignCreationPage = () => {
                     />
                   </div>
                 </div>
-                {formErrors.image && <div className="error-text">{formErrors.image}</div>}
+                {formErrors.image && (
+                  <div className="error-text">{formErrors.image}</div>
+                )}
                 <div className="input-help">
                   <Info size={14} />
-                  <span>High-quality images increase engagement and donations</span>
+                  <span>
+                    High-quality images increase engagement and donations
+                  </span>
                 </div>
               </div>
 
               <div className="form-group">
                 <label>
                   Supporting Document
-                  {formData.category === "Medical" ? (
+                  {formData.category === 'Medical' ? (
                     <span className="required">*</span>
                   ) : (
                     <span className="optional"></span>
                   )}
                 </label>
-                <div className={`document-upload-container ${formErrors.document ? "error-border" : ""}`}>
+                <div
+                  className={`document-upload-container ${
+                    formErrors.document ? 'error-border' : ''
+                  }`}
+                >
                   {formData.document ? (
                     <div className="document-preview">
                       <DocumentIcon size={24} />
                       <div className="document-info">
-                        <span className="document-name">{formData.document.name}</span>
-                        <span className="document-size">{(formData.document.size / 1024 / 1024).toFixed(2)} MB</span>
+                        <span className="document-name">
+                          {formData.document.name}
+                        </span>
+                        <span className="document-size">
+                          {(formData.document.size / 1024 / 1024).toFixed(2)} MB
+                        </span>
                       </div>
-                      <label htmlFor="document-upload" className="change-document-btn">
+                      <label
+                        htmlFor="document-upload"
+                        className="change-document-btn"
+                      >
                         Change
                       </label>
                     </div>
                   ) : (
-                    <label htmlFor="document-upload" className="document-upload-label">
+                    <label
+                      htmlFor="document-upload"
+                      className="document-upload-label"
+                    >
                       <Upload size={24} />
                       <div className="upload-text">
-                        <span className="upload-title">Upload Document (PDF)</span>
-                        <span className="upload-subtitle">
-                          
+                        <span className="upload-title">
+                          Upload Document (PDF)
                         </span>
+                        <span className="upload-subtitle"></span>
                       </div>
                     </label>
                   )}
@@ -589,10 +664,12 @@ const CampaignCreationPage = () => {
                     onChange={handleDocumentChange}
                     className="file-input"
                     disabled={loading}
-                    required={formData.category === "Medical"}
+                    required={formData.category === 'Medical'}
                   />
                 </div>
-                {formErrors.document && <div className="error-text">{formErrors.document}</div>}
+                {formErrors.document && (
+                  <div className="error-text">{formErrors.document}</div>
+                )}
               </div>
 
               <div className="campaign-tips">
@@ -602,19 +679,24 @@ const CampaignCreationPage = () => {
                 </div>
                 <ul>
                   <li>
-                    <strong>Be specific</strong> about your funding goals and how the money will be used
+                    <strong>Be specific</strong> about your funding goals and
+                    how the money will be used
                   </li>
                   <li>
-                    <strong>Add high-quality images</strong> that clearly show your cause
+                    <strong>Add high-quality images</strong> that clearly show
+                    your cause
                   </li>
                   <li>
-                    <strong>Tell a compelling story</strong> that connects emotionally with donors
+                    <strong>Tell a compelling story</strong> that connects
+                    emotionally with donors
                   </li>
                   <li>
-                    <strong>Share your campaign</strong> on social media to reach more potential donors
+                    <strong>Share your campaign</strong> on social media to
+                    reach more potential donors
                   </li>
                   <li>
-                    <strong>Update supporters</strong> regularly on your progress
+                    <strong>Update supporters</strong> regularly on your
+                    progress
                   </li>
                 </ul>
               </div>
@@ -629,15 +711,16 @@ const CampaignCreationPage = () => {
                     <>
                       <div className="duration-info">
                         <p>
-                          Your campaign will run for{" "}
+                          Your campaign will run for{' '}
                           <strong>
                             {Math.max(
                               1,
                               Math.ceil(
-                                (new Date(formData.ending_date) - new Date(formData.starting_date)) /
-                                  (1000 * 60 * 60 * 24),
-                              ),
-                            )}{" "}
+                                (new Date(formData.ending_date) -
+                                  new Date(formData.starting_date)) /
+                                  (1000 * 60 * 60 * 24)
+                              )
+                            )}{' '}
                             days
                           </strong>
                         </p>
@@ -646,8 +729,14 @@ const CampaignCreationPage = () => {
                         <div className="duration-progress"></div>
                       </div>
                       <div className="duration-dates">
-                        <span>{new Date(formData.starting_date).toLocaleDateString()}</span>
-                        <span>{new Date(formData.ending_date).toLocaleDateString()}</span>
+                        <span>
+                          {new Date(
+                            formData.starting_date
+                          ).toLocaleDateString()}
+                        </span>
+                        <span>
+                          {new Date(formData.ending_date).toLocaleDateString()}
+                        </span>
                       </div>
                     </>
                   ) : (
@@ -659,7 +748,12 @@ const CampaignCreationPage = () => {
           </div>
 
           <div className="form-actions">
-            <Button type="button" className="cancel-button" onClick={() => navigate(-1)} disabled={loading}>
+            <Button
+              type="button"
+              className="cancel-button"
+              onClick={() => navigate(-1)}
+              disabled={loading}
+            >
               Cancel
             </Button>
             <Button type="submit" className="submit-button" disabled={loading}>
@@ -679,9 +773,12 @@ const CampaignCreationPage = () => {
         </form>
       </div>
 
-      <ChatbotRecommendation formData={formData} onSuggestionApply={handleSuggestionApply} />
+      <ChatbotRecommendation
+        formData={formData}
+        onSuggestionApply={handleSuggestionApply}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default CampaignCreationPage
+export default CampaignCreationPage;
